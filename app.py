@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, request, render_template
+from sklearn.cluster import KMeans
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, cohen_kappa_score
 import pandas as pd
@@ -67,6 +68,41 @@ def run_j48():
             }
         }
 
+        return jsonify(response)
+    except Exception as e:
+        return jsonify(status="error", message=str(e))
+
+@app.route('/run_kmeans', methods=['POST'])
+def run_kmeans():
+    try:
+        # Parse number of clusters from request
+        num_clusters = int(request.json.get('num_clusters'))
+        
+        file_path = os.path.expanduser("diabetes_dataset00.csv")
+        data = pd.read_csv(file_path)
+        X = data.iloc[:, :-1]
+        X = pd.get_dummies(X)
+
+        # Apply KMeans clustering
+        kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+        kmeans.fit(X)
+        
+        # Calculate cluster centers and format them
+        cluster_centers = pd.DataFrame(kmeans.cluster_centers_, columns=X.columns)
+        cluster_centers.index = [f"Cluster {i}" for i in range(num_clusters)]
+        full_data_mean = X.mean().to_dict()
+        
+        # Calculate distribution of instances per cluster
+        labels, counts = np.unique(kmeans.labels_, return_counts=True)
+        total_instances = len(X)
+        cluster_distribution = [{"cluster": int(label), "count": int(count), "percentage": round((count / total_instances) * 100, 2)} for label, count in zip(labels, counts)]
+
+        response = {
+            "status": "success",
+            "cluster_centers": cluster_centers.to_dict(orient="index"),
+            "full_data_mean": full_data_mean,
+            "cluster_distribution": cluster_distribution
+        }
         return jsonify(response)
     except Exception as e:
         return jsonify(status="error", message=str(e))

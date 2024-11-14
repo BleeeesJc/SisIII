@@ -68,11 +68,12 @@
   </head>
   <body>
     <div class="container">
-      <div class="button-container">
-        <button onclick="runJ48()">Ejecutar J48</button>
+        <div class="button-container">
+          <button onclick="runJ48()">Ejecutar J48</button>
+          <button onclick="promptKMeans()">Ejecutar KMeans</button>
+        </div>
+        <div id="result">Resultados del modelo aparecerán aquí.</div>
       </div>
-      <div id="result">Resultados del modelo aparecerán aquí.</div>
-    </div>
 
     <script>
       function runJ48() {
@@ -86,42 +87,43 @@
           .then((data) => {
             if (data.status === "success") {
               let resultText = `
-                        <table class="metric-table">
-                            <tr><td>Correctly Classified Instances</td><td>${
-                              data.report.accuracy
-                                ? data.report.accuracy * 100
-                                : "N/A"
-                            } %</td></tr>
-                            <tr><td>Incorrectly Classified Instances</td><td>${
-                              100 -
-                              (data.report.accuracy
-                                ? data.report.accuracy * 100
-                                : 0)
-                            } %</td></tr>
-                            <tr><td>Kappa Statistic</td><td>${
-                              data.report.kappa || "N/A"
-                            }</td></tr>
-                            <tr><td>Mean Absolute Error</td><td>${
-                              data.report.mean_absolute_error || "N/A"
-                            }</td></tr>
-                            <tr><td>Root Mean Squared Error</td><td>${
-                              data.report.root_mean_squared_error || "N/A"
-                            }</td></tr>
-                            <tr><td>Relative Absolute Error</td><td>${
-                              data.report.relative_absolute_error
-                                ? data.report.relative_absolute_error * 100
-                                : "N/A"
-                            } %</td></tr>
-                            <tr><td>Root Relative Squared Error</td><td>${
-                              data.report.root_relative_squared_error
-                                ? data.report.root_relative_squared_error * 100
-                                : "N/A"
-                            } %</td></tr>
-                            <tr><td>Total Number of Instances</td><td>${
-                              data.report.total_instances || "N/A"
-                            }</td></tr>
-                        </table>
-                    `;
+                <table class="metric-table">
+                    <tr><td>Correctly Classified Instances</td><td>${
+                      data.report.accuracy
+                        ? (data.report.accuracy * 100).toFixed(2)
+                        : "N/A"
+                    } %</td></tr>
+                    <tr><td>Incorrectly Classified Instances</td><td>${
+                      data.report.accuracy
+                        ? (100 - data.report.accuracy * 100).toFixed(2)
+                        : "N/A"
+                    } %</td></tr>
+                    <tr><td>Kappa Statistic</td><td>${
+                      data.report.kappa || "N/A"
+                    }</td></tr>
+                    <tr><td>Mean Absolute Error</td><td>${
+                      data.report.mean_absolute_error || "N/A"
+                    }</td></tr>
+                    <tr><td>Root Mean Squared Error</td><td>${
+                      data.report.root_mean_squared_error || "N/A"
+                    }</td></tr>
+                    <tr><td>Relative Absolute Error</td><td>${
+                      data.report.relative_absolute_error
+                        ? (data.report.relative_absolute_error * 100).toFixed(2)
+                        : "N/A"
+                    } %</td></tr>
+                    <tr><td>Root Relative Squared Error</td><td>${
+                      data.report.root_relative_squared_error
+                        ? (
+                            data.report.root_relative_squared_error * 100
+                          ).toFixed(2)
+                        : "N/A"
+                    } %</td></tr>
+                    <tr><td>Total Number of Instances</td><td>${
+                      data.report.total_instances || "N/A"
+                    }</td></tr>
+                </table>
+            `;
 
               // Muestra los resultados en formato de tabla
               document.getElementById("result").innerHTML = resultText;
@@ -138,6 +140,63 @@
             document.getElementById("result").style.display = "block";
           });
       }
+      function promptKMeans() {
+            const numClusters = prompt("Ingrese el número de clusters para KMeans:");
+            if (numClusters && !isNaN(numClusters) && numClusters > 0) {
+                runKMeans(numClusters);
+            } else {
+                alert("Por favor ingrese un número válido de clusters.");
+            }
+        }
+
+        function runKMeans(numClusters) {
+            fetch("/run_kmeans", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ num_clusters: numClusters }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "success") {
+                    let resultText = `
+                        <h3>Final Cluster Centroids:</h3>
+                        <table class="metric-table">
+                            <tr><th>Attribute</th><th>Full Data</th>${Object.keys(data.cluster_centers).map(cluster => `<th>${cluster}</th>`).join('')}</tr>
+                    `;
+
+                    // Add Full Data Mean Row
+                    Object.keys(data.full_data_mean).forEach(attribute => {
+                        resultText += `
+                            <tr>
+                                <td>${attribute}</td>
+                                <td>${data.full_data_mean[attribute].toFixed(2)}</td>
+                                ${Object.keys(data.cluster_centers).map(cluster => `<td>${data.cluster_centers[cluster][attribute].toFixed(2)}</td>`).join('')}
+                            </tr>
+                        `;
+                    });
+                    resultText += `</table>`;
+
+                    // Clustered Instances
+                    resultText += `<h3>Clustered Instances:</h3><table class="metric-table">`;
+                    data.cluster_distribution.forEach(dist => {
+                        resultText += `<tr><td>Cluster ${dist.cluster}</td><td>${dist.count} (${dist.percentage}%)</td></tr>`;
+                    });
+                    resultText += `</table>`;
+
+                    document.getElementById("result").innerHTML = resultText;
+                    document.getElementById("result").style.display = "block";
+                } else {
+                    document.getElementById("result").innerText = "Error: " + data.message;
+                    document.getElementById("result").style.display = "block";
+                }
+            })
+            .catch((error) => {
+                document.getElementById("result").innerText = "Error en la conexión: " + error;
+                document.getElementById("result").style.display = "block";
+            });
+        }
     </script>
   </body>
 </html>
