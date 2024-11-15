@@ -71,6 +71,7 @@
         <div class="button-container">
           <button onclick="runJ48()">Ejecutar J48</button>
           <button onclick="promptKMeans()">Ejecutar KMeans</button>
+          <button onclick="runMLP()">Ejecutar MLP</button>
         </div>
         <div id="result">Resultados del modelo aparecerán aquí.</div>
       </div>
@@ -185,6 +186,39 @@
                     });
                     resultText += `</table>`;
 
+                    document.getElementById("result").innerHTML = resultText;
+                    document.getElementById("result").style.display = "block";
+                } else {
+                    document.getElementById("result").innerText = "Error: " + data.message;
+                    document.getElementById("result").style.display = "block";
+                }
+            })
+            .catch((error) => {
+                document.getElementById("result").innerText = "Error en la conexión: " + error;
+                document.getElementById("result").style.display = "block";
+            });
+        }
+        function runMLP() {
+            fetch("/run_mlp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "success") {
+                    let resultText = `
+                        <table class="metric-table">
+                            <tr><td>Accuracy</td><td>${(data.report.accuracy * 100).toFixed(2)} %</td></tr>
+                            <tr><td>Kappa Statistic</td><td>${data.report.kappa || "N/A"}</td></tr>
+                            <tr><td>Mean Absolute Error</td><td>${data.report.mean_absolute_error}</td></tr>
+                            <tr><td>Root Mean Squared Error</td><td>${data.report.root_mean_squared_error}</td></tr>
+                            <tr><td>Relative Absolute Error</td><td>${data.report.relative_absolute_error ? (data.report.relative_absolute_error * 100).toFixed(2) : "N/A"} %</td></tr>
+                            <tr><td>Root Relative Squared Error</td><td>${data.report.root_relative_squared_error ? (data.report.root_relative_squared_error * 100).toFixed(2) : "N/A"} %</td></tr>
+                            <tr><td>Total Instances</td><td>${data.report.total_instances}</td></tr>
+                        </table>
+                    `;
                     document.getElementById("result").innerHTML = resultText;
                     document.getElementById("result").style.display = "block";
                 } else {

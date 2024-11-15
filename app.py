@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, render_template
 from sklearn.cluster import KMeans
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, cohen_kappa_score
 import pandas as pd
 import numpy as np
@@ -106,6 +107,61 @@ def run_kmeans():
         return jsonify(response)
     except Exception as e:
         return jsonify(status="error", message=str(e))
+@app.route('/run_mlp', methods=['POST'])
+def run_mlp():
+    try:
+        # Cargar el archivo CSV
+        file_path = os.path.expanduser("diabetes_dataset00.csv")
+        data = pd.read_csv(file_path)
 
+        # Identificar características (X) y etiquetas (y)
+        X = data.iloc[:, :-1]  # Todas las columnas menos la última como características
+        y = data.iloc[:, -1]   # La última columna como etiquetas
+
+        # One-Hot Encoding para características categóricas
+        X = pd.get_dummies(X)
+
+        # Convierte la columna de etiquetas (y) a valores numéricos si es categórica
+        if y.dtype == 'object':
+            y = y.astype('category').cat.codes
+
+        # Configura y entrena el MLP
+        mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
+        mlp.fit(X, y)
+
+        # Predicciones para calcular métricas
+        y_pred = mlp.predict(X)
+
+        # Calcular métricas
+        accuracy = accuracy_score(y, y_pred)
+        kappa = cohen_kappa_score(y, y_pred) if len(set(y)) > 1 else None
+        mean_abs_error = mean_absolute_error(y, y_pred)
+        root_mean_squared_error = np.sqrt(mean_squared_error(y, y_pred))
+
+        mean_y = np.mean(y)
+        if mean_y != 0:
+            relative_absolute_error = mean_abs_error / np.mean(np.abs(y - mean_y))
+            root_relative_squared_error = root_mean_squared_error / np.sqrt(np.mean((y - mean_y) ** 2))
+        else:
+            relative_absolute_error = None
+            root_relative_squared_error = None
+
+        response = {
+            "status": "success",
+            "report": {
+                "accuracy": accuracy,
+                "kappa": kappa if kappa is not None else "N/A",
+                "mean_absolute_error": mean_abs_error,
+                "root_mean_squared_error": root_mean_squared_error,
+                "relative_absolute_error": relative_absolute_error if relative_absolute_error is not None else "N/A",
+                "root_relative_squared_error": root_relative_squared_error if root_relative_squared_error is not None else "N/A",
+                "total_instances": len(y)
+            }
+        }
+
+        return jsonify(response)
+    except Exception as e:
+        return jsonify(status="error", message=str(e))
+    
 if __name__ == '__main__':
     app.run(debug=True)
