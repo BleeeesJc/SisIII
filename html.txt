@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ejecutar J48 con Weka</title>
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 80%;
+        max-width: 600px;
+      }
+
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+      }
+
+      .button-container button {
+        width: 150px;
+        padding: 10px;
+        margin: 15px 0;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+
+      .button-container button:hover {
+        background-color: #45a049;
+      }
+
+      #result {
+        background-color: #ffffff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 100%;
+        margin-top: 20px;
+        display: none;
+        /* Oculto inicialmente */
+      }
+
+      .metric-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .metric-table td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .metric-table td:first-child {
+        font-weight: bold;
+      }
+
+      .metric-table td:last-child {
+        text-align: right;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="button-container">
+        <button onclick="runJ48()">Ejecutar J48</button>
+        <button onclick="promptKMeans()">Ejecutar KMeans</button>
+        <button onclick="runMLP()">Ejecutar MLP</button>
+      </div>
+      <div id="result">Resultados del modelo aparecerán aquí.</div>
+    </div>
+
+    <script>
+      function runJ48() {
+        fetch("/run_j48", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
+              let resultText = `
+          <table class="metric-table">
+            <tr><td>Correctly Classified Instances</td><td>${
+              data.report.accuracy
+                ? (data.report.accuracy * 100).toFixed(2)
+                : "N/A"
+            } %</td></tr>
+            <tr><td>Incorrectly Classified Instances</td><td>${
+              data.report.accuracy
+                ? (100 - data.report.accuracy * 100).toFixed(2)
+                : "N/A"
+            } %</td></tr>
+            <tr><td>Kappa Statistic</td><td>${
+              data.report.kappa || "N/A"
+            }</td></tr>
+            <tr><td>Mean Absolute Error</td><td>${
+              data.report.mean_absolute_error || "N/A"
+            }</td></tr>
+            <tr><td>Root Mean Squared Error</td><td>${
+              data.report.root_mean_squared_error || "N/A"
+            }</td></tr>
+            <tr><td>Relative Absolute Error</td><td>${
+              data.report.relative_absolute_error
+                ? (data.report.relative_absolute_error * 100).toFixed(2)
+                : "N/A"
+            } %</td></tr>
+            <tr><td>Root Relative Squared Error</td><td>${
+              data.report.root_relative_squared_error
+                ? (data.report.root_relative_squared_error * 100).toFixed(2)
+                : "N/A"
+            } %</td></tr>
+            <tr><td>Total Number of Instances</td><td>${
+              data.report.total_instances || "N/A"
+            }</td></tr>
+          </table>
+        `;
+
+              document.getElementById("result").innerHTML = resultText;
+              document.getElementById("result").style.display = "block";
+            } else {
+              document.getElementById("result").innerText =
+                "Error: " + data.message;
+              document.getElementById("result").style.display = "block";
+            }
+          })
+          .catch((error) => {
+            document.getElementById("result").innerText =
+              "Error en la conexión: " + error;
+            document.getElementById("result").style.display = "block";
+          });
+      }
+      function promptKMeans() {
+        const numClusters = prompt(
+          "Ingrese el número de clusters para KMeans:"
+        );
+        if (numClusters && !isNaN(numClusters) && numClusters > 0) {
+          runKMeans(numClusters);
+        } else {
+          alert("Por favor ingrese un número válido de clusters.");
+        }
+      }
+
+      function runKMeans(numClusters) {
+        fetch("/run_kmeans", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ num_clusters: numClusters }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
+              let resultText = `
+          <h3>Centroides Finales del Cluster:</h3>
+          <table class="metric-table">
+              <tr><th>Atributo</th><th>Datos Completos</th>${Object.keys(
+                data.cluster_centers
+              )
+                .map((cluster) => `<th>${cluster}</th>`)
+                .join("")}</tr>
+        `;
+              Object.keys(data.full_data_mean).forEach((attribute) => {
+                resultText += `
+              <tr>
+                  <td>${attribute}</td>
+                  <td>${data.full_data_mean[attribute].toFixed(2)}</td>
+                  ${Object.keys(data.cluster_centers)
+                    .map(
+                      (cluster) =>
+                        `<td>${data.cluster_centers[cluster][attribute].toFixed(
+                          2
+                        )}</td>`
+                    )
+                    .join("")}
+              </tr>
+          `;
+              });
+              resultText += `</table>`;
+
+              resultText += `<h3>Instancias por Cluster:</h3><table class="metric-table">`;
+              data.cluster_distribution.forEach((dist) => {
+                resultText += `<tr><td>Cluster ${dist.cluster}</td><td>${dist.count} (${dist.percentage}%)</td></tr>`;
+              });
+              resultText += `</table>`;
+
+              document.getElementById("result").innerHTML = resultText;
+              document.getElementById("result").style.display = "block";
+            } else {
+              document.getElementById("result").innerText =
+                "Error: " + data.message;
+              document.getElementById("result").style.display = "block";
+            }
+          })
+          .catch((error) => {
+            document.getElementById("result").innerText =
+              "Error en la conexión: " + error;
+            document.getElementById("result").style.display = "block";
+          });
+      }
+      function runMLP() {
+        fetch("/run_mlp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
+              let resultText = `
+                        <table class="metric-table">
+                            <tr><td>Accuracy</td><td>${(
+                              data.report.accuracy * 100
+                            ).toFixed(2)} %</td></tr>
+                            <tr><td>Kappa Statistic</td><td>${
+                              data.report.kappa || "N/A"
+                            }</td></tr>
+                            <tr><td>Mean Absolute Error</td><td>${
+                              data.report.mean_absolute_error
+                            }</td></tr>
+                            <tr><td>Root Mean Squared Error</td><td>${
+                              data.report.root_mean_squared_error
+                            }</td></tr>
+                            <tr><td>Relative Absolute Error</td><td>${
+                              data.report.relative_absolute_error
+                                ? (
+                                    data.report.relative_absolute_error * 100
+                                  ).toFixed(2)
+                                : "N/A"
+                            } %</td></tr>
+                            <tr><td>Root Relative Squared Error</td><td>${
+                              data.report.root_relative_squared_error
+                                ? (
+                                    data.report.root_relative_squared_error *
+                                    100
+                                  ).toFixed(2)
+                                : "N/A"
+                            } %</td></tr>
+                            <tr><td>Total Instances</td><td>${
+                              data.report.total_instances
+                            }</td></tr>
+                        </table>
+                    `;
+              document.getElementById("result").innerHTML = resultText;
+              document.getElementById("result").style.display = "block";
+            } else {
+              document.getElementById("result").innerText =
+                "Error: " + data.message;
+              document.getElementById("result").style.display = "block";
+            }
+          })
+          .catch((error) => {
+            document.getElementById("result").innerText =
+              "Error en la conexión: " + error;
+            document.getElementById("result").style.display = "block";
+          });
+      }
+    </script>
+  </body>
+</html>
