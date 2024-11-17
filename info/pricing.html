@@ -62,22 +62,9 @@
 				</button>
 				<div class="collapse navbar-collapse" id="navbars-seo">
 					<ul class="navbar-nav ml-auto">
-						<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-						<li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
-						<li class="nav-item"><a class="nav-link" href="case-study.html">Case Study</a></li>
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" id="dropdown-a" data-toggle="dropdown">Services </a>
-							<div class="dropdown-menu" aria-labelledby="dropdown-a">
-								<a class="dropdown-item" href="services.html">Search Engine Optimization</a>
-								<a class="dropdown-item" href="services.html">Reporting</a>
-								<a class="dropdown-item" href="services.html">Email Marketing</a>
-								<a class="dropdown-item" href="services.html">Website Development</a>
-								<a class="dropdown-item" href="services.html">Social Media Marketing</a>
-								<a class="dropdown-item" href="services.html">Pay Per Click</a>
-							</div>
-						</li>						
-						<li class="nav-item active"><a class="nav-link" href="pricing.html">Pricing</a></li>
-						<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+						<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>					
+						<li class="nav-item active"><a class="nav-link" href="pricing.html">Algoritmos</a></li>
+						<li class="nav-item"><a class="nav-link" href="contact.html">Registrate</a></li>
 					</ul>
 				</div>
 			</div>
@@ -85,101 +72,134 @@
 	</header>
 	<!-- End header -->
 
-    <div class="all-page-title" style="background-image:url(images/pattern-4.png);">
-		<!--Page -->
-        <div class="page-info">
+    <div class="all-page-title" style="background-image:url(images/pattern-4.png); position: relative;">
+        <!-- Overlay oscuro -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1;"></div>
+        <!--Page -->
+        <div class="page-info" style="position: relative; z-index: 2;">
             <div class="container">
-            	<div class="inner-container">
+                <div class="inner-container">
                     <ul class="bread-crumb">
-                        <li><a href="index.html">Home</a></li>
-						<li><i class="fa fa-angle-double-right" aria-hidden="true"></i></li>
-                        <li><span>Pricing</span></li>
                     </ul>
                 </div>
             </div>
         </div>
         <!--End Page-->
-        <div class="container text-center">
-            <h1>Pricing</h1>
-			<p>Mauris ornare tellus nec urna tincidunt, eget posuere velit tempus.</p>
+        <div class="container text-center" style="position: relative; z-index: 2;">
+            <h1 style="color: white;">Subir Archivo CSV</h1>
+            <p style="color: white;">Sube un archivo CSV para procesar los datos y analizar la información de manera eficiente.</p>
+            <form action="upload_csv.php" method="POST" enctype="multipart/form-data" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label for="file-upload" class="custom-file-upload">
+                        Seleccionar Archivo
+                    </label>
+                    <input id="file-upload" type="file" name="csv_file" accept=".csv" required>
+                </div>
+                <button type="submit" class="bttn-new-a">Subir Archivo</button>
+            </form>
         </div>
-    </div><!-- end section -->
+    </div>
+    
+    <style>
+    /* Estilo del botón de selección de archivo */
+    .custom-file-upload {
+        display: inline-block;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    
+    .custom-file-upload:hover {
+        background-color: #0056b3;
+    }
+    
+    /* Ocultar el botón original */
+    input[type="file"] {
+        display: none;
+    }
+    </style>
+    
+    
+    
+    
+    
 
     <div id="pricing" class="section wb">
         <div class="container">
             <div class="section-title text-center">
-                <h3>Pricing</h3>
-                <p class="lead">Get the red carpet treatment just $39 per month! It is estimated that 3.5 million established by personal blogs.<br> From each other, we share paid WordPress themes WP Service...</p>
+                <h3>Algoritmos</h3>
+                <p class="lead">Selecciona uno de los tres algoritmos disponibles para procesar tus datos</p>
             </div><!-- end title -->
-
+    
             <div class="row">
                 <div class="col-md-12">
                     <div class="pricing pricing-palden">
-						<div class="pricing-item">
-						  <div class="pricing-deco">
-							<svg class="pricing-deco-img" enable-background="new 0 0 300 100" height="100px" id="Layer_1" preserveAspectRatio="none" version="1.1" viewBox="0 0 300 100" width="300px" x="0px" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" y="0px">
-							  <path class="deco-layer deco-layer--1" d="M30.913,43.944c0,0,42.911-34.464,87.51-14.191c77.31,35.14,113.304-1.952,146.638-4.729&#x000A;	c48.654-4.056,69.94,16.218,69.94,16.218v54.396H30.913V43.944z" fill="#FFFFFF" opacity="0.6"></path>
-							  <path class="deco-layer deco-layer--2" d="M-35.667,44.628c0,0,42.91-34.463,87.51-14.191c77.31,35.141,113.304-1.952,146.639-4.729&#x000A;	c48.653-4.055,69.939,16.218,69.939,16.218v54.396H-35.667V44.628z" fill="#FFFFFF" opacity="0.6"></path>
-							  <path class="deco-layer deco-layer--3" d="M43.415,98.342c0,0,48.283-68.927,109.133-68.927c65.886,0,97.983,67.914,97.983,67.914v3.716&#x000A;	H42.401L43.415,98.342z" fill="#FFFFFF" opacity="0.7"></path>
-							  <path class="deco-layer deco-layer--4" d="M-34.667,62.998c0,0,56-45.667,120.316-27.839C167.484,57.842,197,41.332,232.286,30.428&#x000A;	c53.07-16.399,104.047,36.903,104.047,36.903l1.333,36.667l-372-2.954L-34.667,62.998z" fill="#FFFFFF"></path>
-							</svg>
-							<div class="pricing-price"><span class="pricing-currency">$</span>32
-							  <span class="pricing-period">/ mo</span>
-							</div>
-							<h3 class="pricing-title">Freelance</h3>
-						  </div>
-						  <ul class="pricing-feature-list">
-							<li class="pricing-feature">1 GB of space</li>
-							<li class="pricing-feature">Support at $25/hour</li>
-							<li class="pricing-feature">Limited cloud access</li>
-						  </ul>
-						  <button class="bttn-new-a">Choose plan</button>
-						</div>
-						<div class="pricing-item pricing__item--featured">
-						  <div class="pricing-deco">
-							<svg class="pricing-deco-img" enable-background="new 0 0 300 100" height="100px" id="Layer_1" preserveAspectRatio="none" version="1.1" viewBox="0 0 300 100" width="300px" x="0px" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" y="0px">
-							  <path class="deco-layer deco-layer--1" d="M30.913,43.944c0,0,42.911-34.464,87.51-14.191c77.31,35.14,113.304-1.952,146.638-4.729&#x000A;	c48.654-4.056,69.94,16.218,69.94,16.218v54.396H30.913V43.944z" fill="#FFFFFF" opacity="0.6"></path>
-							  <path class="deco-layer deco-layer--2" d="M-35.667,44.628c0,0,42.91-34.463,87.51-14.191c77.31,35.141,113.304-1.952,146.639-4.729&#x000A;	c48.653-4.055,69.939,16.218,69.939,16.218v54.396H-35.667V44.628z" fill="#FFFFFF" opacity="0.6"></path>
-							  <path class="deco-layer deco-layer--3" d="M43.415,98.342c0,0,48.283-68.927,109.133-68.927c65.886,0,97.983,67.914,97.983,67.914v3.716&#x000A;	H42.401L43.415,98.342z" fill="#FFFFFF" opacity="0.7"></path>
-							  <path class="deco-layer deco-layer--4" d="M-34.667,62.998c0,0,56-45.667,120.316-27.839C167.484,57.842,197,41.332,232.286,30.428&#x000A;	c53.07-16.399,104.047,36.903,104.047,36.903l1.333,36.667l-372-2.954L-34.667,62.998z" fill="#FFFFFF"></path>
-							</svg>
-							<div class="pricing-price"><span class="pricing-currency">$</span>45
-							  <span class="pricing-period">/ mo</span>
-							</div>
-							<h3 class="pricing-title">Business</h3>
-						  </div>
-						  <ul class="pricing-feature-list">
-							<li class="pricing-feature">5 GB of space</li>
-							<li class="pricing-feature">Support at $5/hour</li>
-							<li class="pricing-feature">Full cloud access</li>
-						  </ul>
-						  <button class="bttn-new-a">Choose plan</button>
-						</div>
-						<div class="pricing-item">
-						  <div class="pricing-deco">
-							<svg class="pricing-deco-img" enable-background="new 0 0 300 100" height="100px" id="Layer_1" preserveAspectRatio="none" version="1.1" viewBox="0 0 300 100" width="300px" x="0px" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" y="0px">
-							  <path class="deco-layer deco-layer--1" d="M30.913,43.944c0,0,42.911-34.464,87.51-14.191c77.31,35.14,113.304-1.952,146.638-4.729&#x000A;	c48.654-4.056,69.94,16.218,69.94,16.218v54.396H30.913V43.944z" fill="#FFFFFF" opacity="0.6"></path>
-							  <path class="deco-layer deco-layer--2" d="M-35.667,44.628c0,0,42.91-34.463,87.51-14.191c77.31,35.141,113.304-1.952,146.639-4.729&#x000A;	c48.653-4.055,69.939,16.218,69.939,16.218v54.396H-35.667V44.628z" fill="#FFFFFF" opacity="0.6"></path>
-							  <path class="deco-layer deco-layer--3" d="M43.415,98.342c0,0,48.283-68.927,109.133-68.927c65.886,0,97.983,67.914,97.983,67.914v3.716&#x000A;	H42.401L43.415,98.342z" fill="#FFFFFF" opacity="0.7"></path>
-							  <path class="deco-layer deco-layer--4" d="M-34.667,62.998c0,0,56-45.667,120.316-27.839C167.484,57.842,197,41.332,232.286,30.428&#x000A;	c53.07-16.399,104.047,36.903,104.047,36.903l1.333,36.667l-372-2.954L-34.667,62.998z" fill="#FFFFFF"></path>
-							</svg>
-							<div class="pricing-price"><span class="pricing-currency">$</span>80
-							  <span class="pricing-period">/ mo</span>
-							</div>
-							<h3 class="pricing-title">Enterprise</h3>
-						  </div>
-						  <ul class="pricing-feature-list">
-							<li class="pricing-feature">10 GB of space</li>
-							<li class="pricing-feature">Support at $5/hour</li>
-							<li class="pricing-feature">Full cloud access</li>
-						  </ul>
-						  <button class="bttn-new-a">Choose plan</button>
-						</div>
-					</div>
+                        <div class="pricing-item">
+                            <div class="pricing-deco">
+                                <svg class="pricing-deco-img" enable-background="new 0 0 300 100" height="100px" id="Layer_1" preserveAspectRatio="none" version="1.1" viewBox="0 0 300 100" width="300px" x="0px" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" y="0px">
+                                    <path class="deco-layer deco-layer--1" d="M30.913,43.944c0,0,42.911-34.464,87.51-14.191c77.31,35.14,113.304-1.952,146.638-4.729&#x000A;	c48.654-4.056,69.94,16.218,69.94,16.218v54.396H30.913V43.944z" fill="#FFFFFF" opacity="0.6"></path>
+                                    <path class="deco-layer deco-layer--2" d="M-35.667,44.628c0,0,42.91-34.463,87.51-14.191c77.31,35.141,113.304-1.952,146.639-4.729&#x000A;	c48.653-4.055,69.939,16.218,69.939,16.218v54.396H-35.667V44.628z" fill="#FFFFFF" opacity="0.6"></path>
+                                    <path class="deco-layer deco-layer--3" d="M43.415,98.342c0,0,48.283-68.927,109.133-68.927c65.886,0,97.983,67.914,97.983,67.914v3.716&#x000A;	H42.401L43.415,98.342z" fill="#FFFFFF" opacity="0.7"></path>
+                                    <path class="deco-layer deco-layer--4" d="M-34.667,62.998c0,0,56-45.667,120.316-27.839C167.484,57.842,197,41.332,232.286,30.428&#x000A;	c53.07-16.399,104.047,36.903,104.047,36.903l1.333,36.667l-372-2.954L-34.667,62.998z" fill="#FFFFFF"></path>
+                                </svg>
+                                <div class="pricing-price">
+                                    <h3 class="pricing-title" style="font-size: 1.5rem;">Árbol de Decisiones</h3>
+                                </div>
+                            </div>
+                            <ul class="pricing-feature-list">
+                                <li class="pricing-feature">Este algoritmo crea árboles de decisión para clasificar datos. Es útil para analizar información médica y hacer predicciones, como identificar riesgos de diabetes basados en niveles de glucosa o historial familiar.</li>
+                                <li class="pricing-feature"></li>
+                            </ul>
+                            <button class="bttn-new-a">Elegir</button>
+                        </div>
+                        <div class="pricing-item pricing__item--featured">
+                            <div class="pricing-deco">
+                                <svg class="pricing-deco-img" enable-background="new 0 0 300 100" height="100px" id="Layer_1" preserveAspectRatio="none" version="1.1" viewBox="0 0 300 100" width="300px" x="0px" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" y="0px">
+                                    <path class="deco-layer deco-layer--1" d="M30.913,43.944c0,0,42.911-34.464,87.51-14.191c77.31,35.14,113.304-1.952,146.638-4.729&#x000A;	c48.654-4.056,69.94,16.218,69.94,16.218v54.396H30.913V43.944z" fill="#FFFFFF" opacity="0.6"></path>
+                                    <path class="deco-layer deco-layer--2" d="M-35.667,44.628c0,0,42.91-34.463,87.51-14.191c77.31,35.141,113.304-1.952,146.639-4.729&#x000A;	c48.653-4.055,69.939,16.218,69.939,16.218v54.396H-35.667V44.628z" fill="#FFFFFF" opacity="0.6"></path>
+                                    <path class="deco-layer deco-layer--3" d="M43.415,98.342c0,0,48.283-68.927,109.133-68.927c65.886,0,97.983,67.914,97.983,67.914v3.716&#x000A;	H42.401L43.415,98.342z" fill="#FFFFFF" opacity="0.7"></path>
+                                    <path class="deco-layer deco-layer--4" d="M-34.667,62.998c0,0,56-45.667,120.316-27.839C167.484,57.842,197,41.332,232.286,30.428&#x000A;	c53.07-16.399,104.047,36.903,104.047,36.903l1.333,36.667l-372-2.954L-34.667,62.998z" fill="#FFFFFF"></path>
+                                </svg>
+                                <div class="pricing-price">
+                                    <h3 class="pricing-title" style="font-size: 1.5rem;">Clustering</h3>
+                                </div>
+                            </div>
+                            <ul class="pricing-feature-list">
+                                <li class="pricing-feature">El Clustering agrupa datos similares en categorías. Esto ayuda a encontrar patrones entre pacientes, como factores de riesgo comunes o perfiles de estilo de vida relacionados con la diabetes.</li>
+                                <li class="pricing-feature"></li>
+                            </ul>
+                            <button class="bttn-new-a">Elegir</button>
+                        </div>
+                        <div class="pricing-item">
+                            <div class="pricing-deco">
+                                <svg class="pricing-deco-img" enable-background="new 0 0 300 100" height="100px" id="Layer_1" preserveAspectRatio="none" version="1.1" viewBox="0 0 300 100" width="300px" x="0px" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" y="0px">
+                                    <path class="deco-layer deco-layer--1" d="M30.913,43.944c0,0,42.911-34.464,87.51-14.191c77.31,35.14,113.304-1.952,146.638-4.729&#x000A;	c48.654-4.056,69.94,16.218,69.94,16.218v54.396H30.913V43.944z" fill="#FFFFFF" opacity="0.6"></path>
+                                    <path class="deco-layer deco-layer--2" d="M-35.667,44.628c0,0,42.91-34.463,87.51-14.191c77.31,35.141,113.304-1.952,146.639-4.729&#x000A;	c48.653-4.055,69.939,16.218,69.939,16.218v54.396H-35.667V44.628z" fill="#FFFFFF" opacity="0.6"></path>
+                                    <path class="deco-layer deco-layer--3" d="M43.415,98.342c0,0,48.283-68.927,109.133-68.927c65.886,0,97.983,67.914,97.983,67.914v3.716&#x000A;	H42.401L43.415,98.342z" fill="#FFFFFF" opacity="0.7"></path>
+                                    <path class="deco-layer deco-layer--4" d="M-34.667,62.998c0,0,56-45.667,120.316-27.839C167.484,57.842,197,41.332,232.286,30.428&#x000A;	c53.07-16.399,104.047,36.903,104.047,36.903l1.333,36.667l-372-2.954L-34.667,62.998z" fill="#FFFFFF"></path>
+                                </svg>
+                                <div class="pricing-price">
+                                    <h3 class="pricing-title" style="font-size: 1.5rem;">Red Neuronal</h3>
+                                </div>
+                            </div>
+                            <ul class="pricing-feature-list">
+                                <li class="pricing-feature">Las redes neuronales imitan el funcionamiento del cerebro para analizar datos complejos. Se utilizan para predecir riesgos de diabetes considerando múltiples factores, como hábitos y genética</li>
+                                <li class="pricing-feature"></li>
+                            </ul>
+                            <button class="bttn-new-a">Elegir</button>
+                        </div>
+                    </div>
                 </div><!-- end col -->
             </div><!-- end row -->
         </div><!-- end container -->
     </div><!-- end section -->
+    
 
     <div id="testimonials" class="section wb">
         <div class="container">
@@ -276,14 +296,6 @@
         <div class="container">
             <div class="row">
                 <div id="logo-carousel" class="owl-carousel">
-					<div> <img src="images/logo_01.png" alt=""> </div>
-					<div> <img src="images/logo_02.png" alt=""> </div>
-					<div> <img src="images/logo_03.png" alt=""> </div>
-					<div> <img src="images/logo_04.png" alt=""> </div>
-					<div> <img src="images/logo_05.png" alt=""> </div>
-					<div> <img src="images/logo_06.png" alt=""> </div>
-					<div> <img src="images/logo_01.png" alt=""> </div>
-					<div> <img src="images/logo_02.png" alt=""> </div>
 				</div>
             </div><!-- end row -->
         </div><!-- end container -->
@@ -297,8 +309,8 @@
                         <div class="widget-title">
                             <img src="images/logo-light.png" alt="">
                         </div>
-                        <p> SEO Mauris pharetra quam ut commodo malesuada. Sed a ornare purus, nec cursus tortor. Integer vehicula felis nec nunc pulvinar efficitur. In et semper odio. Sed laoreet ullamcorper augue, ut mattis metus mattis quis.</p>
-                        <p>Sed fermentum est vitae rhoncus molestie. Cum sociis natoque penatibus et magnis dis montes.</p>
+                        <p> Sistema de información orientado al manejo de datos para la identificación temprana y seguimiento de condiciones prediabéticas y diabéticas</p>
+                        <p>Si tienes alguna duda o problema no dudes en contactarnos, nuestros correos electrónicos se encuentran a continuación</p>
                     </div><!-- end clearfix -->
                 </div><!-- end col -->
 				
@@ -309,11 +321,8 @@
                         </div>
                         <ul class="footer-links">
                             <li><a href="#">Home</a></li>
-                            <li><a href="#">Blog</a></li>
-                            <li><a href="#">Pricing</a></li>
-							<li><a href="#">About</a></li>
-							<li><a href="#">Faq</a></li>
-							<li><a href="#">Contact</a></li>
+                            <li><a href="#">Algoritmos</a></li>
+							<li><a href="#">Registrate</a></li>
                         </ul><!-- end links -->
                     </div><!-- end clearfix -->
                 </div><!-- end col -->
@@ -323,7 +332,7 @@
 						<div class="widget-title">
 							<h3>Newsletter</h3>
 						</div>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et tincidunt risus, vitae sollicitudin tellus.</p>
+						<p>Si quieres que te lleguen las últimas noticias y actualizaciones del sistema de información, por favor deja tu correo</p>
 						<div class="news-box">
 							<form action="#" method="post">
 								<div class="form-group">
@@ -337,7 +346,7 @@
 						</div>
 						
                         <div class="widget-title">
-                            <h3>Social</h3>
+                            <h3>Redes Sociales</h3>
                         </div>
                         <ul class="footer-links social-md">
                             <li><a class="fb btn-a" title="Facebook" data-tippy-animation="scale" href="#"><i class="fa fa-facebook"></i></a></li>
@@ -352,14 +361,14 @@
 				<div class="col-lg-3 col-md-6 col-xs-12">
                     <div class="widget clearfix">
                         <div class="widget-title">
-                            <h3>Contact Details</h3>
+                            <h3>Detalles de Contacto</h3>
                         </div>
 
                         <ul class="footer-links">
-                            <li><a href="mailto:#">info@yoursite.com</a></li>
-                            <li><a href="#">www.yoursite.com</a></li>
-                            <li>PO Box 16122 Collins Street West Victoria 8007 Australia</li>
-                            <li>+61 3 8376 6284</li>
+                            <li><a href="mailto:#">dominicescalante@gmail.com</a></li>
+                            <li><a href="#">fmattosteran@gmail.com</a></li>
+                            <li>jared170209@gmail.com</li>
+                            <li>mateovalenxd@gmail.com</li>
                         </ul><!-- end links -->
                     </div><!-- end clearfix -->
                 </div><!-- end col -->
@@ -372,7 +381,6 @@
         <div class="container">
             <div class="footer-distributed">
                 <div class="footer-left">
-                    <p class="footer-company-name">All Rights Reserved. &copy; 2018 <a href="#">GreatSEO</a> Design By : <a href="https://html.design/">html design</a></p>
                 </div>
             </div>
         </div><!-- end container -->
