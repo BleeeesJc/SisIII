@@ -2,15 +2,14 @@ from flask import Flask, jsonify, request,render_template
 import weka.core.jvm as jvm
 from weka.clusterers import Clusterer
 from weka.classifiers import Classifier, Evaluation
-from collections import defaultdict
 from weka.core.converters import Loader
 from weka.core.classes import Random
-import tempfile
 import os
 import subprocess
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
+import networkx as nx
 
 app = Flask(__name__, static_folder="static")
 
@@ -76,17 +75,14 @@ def run_kmeans():
         data = loader.load_file(csv_path)
         data.class_index = -1
 
-        # Configurar y construir el clusterer
         clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans", options=["-N", str(num_clusters)])
         clusterer.build_clusterer(data)
 
-        # Asignar cada instancia a un cluster
         clusters = defaultdict(list)
         for instance_idx, instance in enumerate(data):
             cluster_idx = clusterer.cluster_instance(instance)
             clusters[cluster_idx].append(instance)
 
-        # Calcular los centroides manualmente
         cluster_centers = {}
         for cluster_idx, instances in clusters.items():
             cluster_centroid = {}
@@ -96,7 +92,6 @@ def run_kmeans():
                 cluster_centroid[attr_name] = sum(attr_values) / len(attr_values) if attr_values else 0.0
             cluster_centers[f"Cluster {cluster_idx + 1}"] = cluster_centroid
 
-        # Visualización de los clusters
         data_points = np.array([[instance.get_value(i) for i in range(data.num_attributes)] for instance in data])
         cluster_assignments = [clusterer.cluster_instance(instance) for instance in data]
 
@@ -104,7 +99,6 @@ def run_kmeans():
         if data.num_attributes >= 2:
             plt.scatter(data_points[:, 0], data_points[:, 1], c=cluster_assignments, cmap='viridis', s=50, label="Instancias")
             
-            # Dibujar centroides
             for cluster_idx, centroid in cluster_centers.items():
                 plt.scatter(
                     [centroid[data.attribute(0).name]], 
@@ -126,7 +120,6 @@ def run_kmeans():
         plt.legend()
         plt.grid(True)
 
-        # Guardar la visualización
         cluster_image_path = os.path.join(app.static_folder, "clusters.png")
         plt.savefig(cluster_image_path)
         plt.close()
@@ -143,21 +136,23 @@ def run_kmeans():
 @app.route('/run_mlp', methods=['POST'])
 def run_mlp():
     try:
-        csv_path = "muestra_reducida100.csv" 
+        csv_path = "muestra_reducida100.csv"
 
         loader = Loader(classname="weka.core.converters.CSVLoader")
         data = loader.load_file(csv_path)
         data.class_is_last()
 
-        mlp = Classifier(classname="weka.classifiers.functions.MultilayerPerceptron", 
-                         options=["-L", "0.3", "-M", "0.2", "-N", "500", "-V", "0", "-S", "0", "-E", "20", "-H", "a"])
+        mlp = Classifier(
+            classname="weka.classifiers.functions.MultilayerPerceptron",
+            options=["-L", "0.3", "-M", "0.2", "-N", "500", "-V", "0", "-S", "0", "-E", "20", "-H", "a"]
+        )
         mlp.build_classifier(data)
 
         evaluation = Evaluation(data)
         evaluation.crossvalidate_model(mlp, data, 10, Random(1))
 
-        report = {
-            "accuracy": evaluation.percent_correct / 100,  
+        metrics = {
+            "accuracy": evaluation.percent_correct / 100,
             "kappa": evaluation.kappa,
             "mean_absolute_error": evaluation.mean_absolute_error,
             "root_mean_squared_error": evaluation.root_mean_squared_error,
@@ -166,7 +161,47 @@ def run_mlp():
             "total_instances": evaluation.num_instances,
         }
 
-        return jsonify({"status": "success", "report": report})
+        def plot_neural_network(input_size, hidden_size, output_size):
+            layers = [input_size, hidden_size, output_size]
+            G = nx.DiGraph()
+            pos = {}
+
+            y_offset = 0
+            for layer_idx, layer_size in enumerate(layers):
+                x_offset = 0
+                for neuron in range(layer_size):
+                    node_name = f"L{layer_idx}_N{neuron}"
+                    G.add_node(node_name, layer=layer_idx)
+                    pos[node_name] = (layer_idx, y_offset - neuron)
+                y_offset -= layer_size + 2
+
+            for layer_idx in range(len(layers) - 1):
+                for src in range(layers[layer_idx]):
+                    for dst in range(layers[layer_idx + 1]):
+                        G.add_edge(f"L{layer_idx}_N{src}", f"L{layer_idx + 1}_N{dst}")
+
+            plt.figure(figsize=(10, 8))
+            nx.draw(
+                G, pos, with_labels=False, node_size=1000, node_color="skyblue", edge_color="gray", arrows=True
+            )
+            for layer_idx, layer_size in enumerate(layers):
+                plt.text(layer_idx, 0, f"Layer {layer_idx + 1}", fontsize=12, ha="center")
+            plt.title("Neural Network Visualization")
+            plt.axis("off")
+
+        input_size = data.num_attributes - 1 
+        hidden_size = 10 
+        output_size = data.class_attribute.num_values  
+        plot_neural_network(input_size, hidden_size, output_size)
+        mlp_image_path = os.path.join(app.static_folder, "mlp_network.png")
+        plt.savefig(mlp_image_path)
+        plt.close()
+
+        return jsonify({
+            "status": "success",
+            "report": metrics,
+            "mlp_image_url": "/static/mlp_network.png",
+        })
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
