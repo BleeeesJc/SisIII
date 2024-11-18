@@ -20,7 +20,7 @@ def index():
 @app.route('/run_j48', methods=['POST'])
 def run_j48():
     try:
-        csv_path = "Restaurants.csv" 
+        csv_path = "muestra_reducida.csv" 
 
         loader = Loader(classname="weka.core.converters.CSVLoader")
         data = loader.load_file(csv_path)
