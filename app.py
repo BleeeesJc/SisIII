@@ -1,167 +1,149 @@
-from flask import Flask, jsonify, request, render_template
-from sklearn.cluster import KMeans
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, cohen_kappa_score
-import pandas as pd
-import numpy as np
+from flask import Flask, jsonify, request,render_template
+import weka.core.jvm as jvm
+from weka.clusterers import Clusterer
+from weka.classifiers import Classifier, Evaluation
+from collections import defaultdict
+from weka.core.converters import Loader
+from weka.core.classes import Random
+import tempfile
 import os
+import subprocess
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
+
+jvm.start()
 
 @app.route('/')
 def index():
     return render_template('Algoritmos.html')
 
+
 @app.route('/run_j48', methods=['POST'])
 def run_j48():
     try:
-        # Ruta del archivo CSV
-        file_path = os.path.expanduser("diabetes_dataset00.csv")
-        data = pd.read_csv(file_path)
+        csv_path = "muestra_reducida100.csv"  
 
-        # Identificar características (X) y etiquetas (y)
-        X = data.iloc[:, :-1]  # Todas las columnas menos la última como características
-        y = data.iloc[:, -1]   # La última columna como etiquetas
+        loader = Loader(classname="weka.core.converters.CSVLoader")
+        data = loader.load_file(csv_path)
+        data.class_is_last()
 
-        # Convierte columnas categóricas en X a valores numéricos usando One-Hot Encoding
-        X = pd.get_dummies(X)
+        classifier = Classifier(classname="weka.classifiers.trees.J48")
+        classifier.build_classifier(data)
 
-        # Convierte la columna de etiquetas (y) a valores numéricos si es categórica
-        if y.dtype == 'object':
-            y = y.astype('category').cat.codes
+        dot_path = os.path.join(app.static_folder, "tree.dot")
+        with open(dot_path, "w") as dot_file:
+            dot_file.write(classifier.graph)
 
-        # Configura y entrena el árbol de decisión
-        clf = DecisionTreeClassifier(criterion="entropy")
-        clf.fit(X, y)
+        if not os.path.exists(dot_path):
+            raise Exception(f"El archivo DOT no existe: {dot_path}")
 
-        # Predicciones para calcular métricas
-        y_pred = clf.predict(X)
+        png_path = os.path.join(app.static_folder, "tree.png")
+        command = ["dot", "-Tpng", dot_path, "-o", png_path]
+        subprocess.run(command, check=True)
 
-        # Calcular métricas adicionales con manejo de errores
-        accuracy = accuracy_score(y, y_pred)
-        kappa = cohen_kappa_score(y, y_pred) if len(set(y)) > 1 else None
-        mean_abs_error = mean_absolute_error(y, y_pred)
-        root_mean_squared_error = np.sqrt(mean_squared_error(y, y_pred))
-        
-        # Evitar división por cero en métricas relativas
-        mean_y = np.mean(y)
-        if mean_y != 0:
-            relative_absolute_error = mean_abs_error / np.mean(np.abs(y - mean_y))
-            root_relative_squared_error = root_mean_squared_error / np.sqrt(np.mean((y - mean_y) ** 2))
-        else:
-            relative_absolute_error = None
-            root_relative_squared_error = None
-
-        total_instances = len(y)
-
-        # Construcción de la respuesta JSON
-        response = {
-            "status": "success",
-            "report": {
-                "accuracy": accuracy,
-                "kappa": kappa if kappa is not None else "N/A",
-                "mean_absolute_error": mean_abs_error,
-                "root_mean_squared_error": root_mean_squared_error,
-                "relative_absolute_error": relative_absolute_error if relative_absolute_error is not None else "N/A",
-                "root_relative_squared_error": root_relative_squared_error if root_relative_squared_error is not None else "N/A",
-                "total_instances": total_instances
-            }
+        evaluation = Evaluation(data)
+        evaluation.crossvalidate_model(classifier, data, 10, Random(1))
+        report = {
+            "accuracy": evaluation.percent_correct / 100,
+            "kappa": evaluation.kappa,
+            "mean_absolute_error": evaluation.mean_absolute_error,
+            "root_mean_squared_error": evaluation.root_mean_squared_error,
+            "relative_absolute_error": evaluation.relative_absolute_error,
+            "root_relative_squared_error": evaluation.root_relative_squared_error,
+            "total_instances": evaluation.num_instances,
         }
+        return jsonify({
+            "status": "success",
+            "report": report,
+            "tree_image_url": "/static/tree.png",
+        })
 
-        return jsonify(response)
+    except subprocess.CalledProcessError as e:
+        return jsonify({"status": "error", "message": f"Error al ejecutar dot: {e}"})
     except Exception as e:
-        return jsonify(status="error", message=str(e))
+        return jsonify({"status": "error", "message": str(e)})
 
 @app.route('/run_kmeans', methods=['POST'])
 def run_kmeans():
     try:
-        # Parse number of clusters from request
-        num_clusters = int(request.json.get('num_clusters'))
-        
-        file_path = os.path.expanduser("diabetes_dataset00.csv")
-        data = pd.read_csv(file_path)
-        X = data.iloc[:, :-1]
-        X = pd.get_dummies(X)
+        num_clusters = int(request.json.get("num_clusters", 2))  
+        csv_path = "Restaurants.csv"
 
-        # Apply KMeans clustering
-        kmeans = KMeans(n_clusters=num_clusters, random_state=42)
-        kmeans.fit(X)
-        
-        # Calculate cluster centers and format them
-        cluster_centers = pd.DataFrame(kmeans.cluster_centers_, columns=X.columns)
-        cluster_centers.index = [f"Cluster {i}" for i in range(num_clusters)]
-        full_data_mean = X.mean().to_dict()
-        
-        # Calculate distribution of instances per cluster
-        labels, counts = np.unique(kmeans.labels_, return_counts=True)
-        total_instances = len(X)
-        cluster_distribution = [{"cluster": int(label), "count": int(count), "percentage": round((count / total_instances) * 100, 2)} for label, count in zip(labels, counts)]
+        loader = Loader(classname="weka.core.converters.CSVLoader")
+        data = loader.load_file(csv_path)
+        data.class_index = -1
 
-        response = {
-            "status": "success",
-            "cluster_centers": cluster_centers.to_dict(orient="index"),
-            "full_data_mean": full_data_mean,
-            "cluster_distribution": cluster_distribution
+        clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans", options=["-N", str(num_clusters)])
+        clusterer.build_clusterer(data)
+
+        clusters = defaultdict(list)
+        for instance_idx, instance in enumerate(data):
+            cluster_idx = clusterer.cluster_instance(instance)
+            clusters[cluster_idx].append(instance)
+
+        cluster_centers = {}
+        for cluster_idx, instances in clusters.items():
+            cluster_centroid = {}
+            for attr_idx in range(data.num_attributes):
+                attr_name = data.attribute(attr_idx).name
+                attr_values = [instance.get_value(attr_idx) for instance in instances]
+                cluster_centroid[attr_name] = sum(attr_values) / len(attr_values) if attr_values else 0.0
+            cluster_centers[f"Cluster {cluster_idx + 1}"] = cluster_centroid
+
+        full_data_mean = {
+            data.attribute(idx).name: sum(instance.get_value(idx) for instance in data) / data.num_instances
+            for idx in range(data.num_attributes)
         }
-        return jsonify(response)
+
+        cluster_distribution = []
+        for cluster_idx, instances in clusters.items():
+            count = len(instances)
+            percentage = (count / data.num_instances) * 100
+            cluster_distribution.append({"cluster": cluster_idx + 1, "count": count, "percentage": round(percentage, 2)})
+
+        return jsonify({
+            "status": "success",
+            "cluster_centers": cluster_centers,
+            "full_data_mean": full_data_mean,
+            "cluster_distribution": cluster_distribution,
+        })
+
     except Exception as e:
-        return jsonify(status="error", message=str(e))
+        return jsonify({"status": "error", "message": str(e)})
+
 @app.route('/run_mlp', methods=['POST'])
 def run_mlp():
     try:
-        # Cargar el archivo CSV
-        file_path = os.path.expanduser("diabetes_dataset00.csv")
-        data = pd.read_csv(file_path)
+        csv_path = "Restaurants.csv" 
 
-        # Identificar características (X) y etiquetas (y)
-        X = data.iloc[:, :-1]  # Todas las columnas menos la última como características
-        y = data.iloc[:, -1]   # La última columna como etiquetas
+        loader = Loader(classname="weka.core.converters.CSVLoader")
+        data = loader.load_file(csv_path)
+        data.class_is_last()
 
-        # One-Hot Encoding para características categóricas
-        X = pd.get_dummies(X)
+        mlp = Classifier(classname="weka.classifiers.functions.MultilayerPerceptron", 
+                         options=["-L", "0.3", "-M", "0.2", "-N", "500", "-V", "0", "-S", "0", "-E", "20", "-H", "a"])
+        mlp.build_classifier(data)
 
-        # Convierte la columna de etiquetas (y) a valores numéricos si es categórica
-        if y.dtype == 'object':
-            y = y.astype('category').cat.codes
+        evaluation = Evaluation(data)
+        evaluation.crossvalidate_model(mlp, data, 10, Random(1))
 
-        # Configura y entrena el MLP
-        mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
-        mlp.fit(X, y)
-
-        # Predicciones para calcular métricas
-        y_pred = mlp.predict(X)
-
-        # Calcular métricas
-        accuracy = accuracy_score(y, y_pred)
-        kappa = cohen_kappa_score(y, y_pred) if len(set(y)) > 1 else None
-        mean_abs_error = mean_absolute_error(y, y_pred)
-        root_mean_squared_error = np.sqrt(mean_squared_error(y, y_pred))
-
-        mean_y = np.mean(y)
-        if mean_y != 0:
-            relative_absolute_error = mean_abs_error / np.mean(np.abs(y - mean_y))
-            root_relative_squared_error = root_mean_squared_error / np.sqrt(np.mean((y - mean_y) ** 2))
-        else:
-            relative_absolute_error = None
-            root_relative_squared_error = None
-
-        response = {
-            "status": "success",
-            "report": {
-                "accuracy": accuracy,
-                "kappa": kappa if kappa is not None else "N/A",
-                "mean_absolute_error": mean_abs_error,
-                "root_mean_squared_error": root_mean_squared_error,
-                "relative_absolute_error": relative_absolute_error if relative_absolute_error is not None else "N/A",
-                "root_relative_squared_error": root_relative_squared_error if root_relative_squared_error is not None else "N/A",
-                "total_instances": len(y)
-            }
+        report = {
+            "accuracy": evaluation.percent_correct / 100,  
+            "kappa": evaluation.kappa,
+            "mean_absolute_error": evaluation.mean_absolute_error,
+            "root_mean_squared_error": evaluation.root_mean_squared_error,
+            "relative_absolute_error": evaluation.relative_absolute_error,
+            "root_relative_squared_error": evaluation.root_relative_squared_error,
+            "total_instances": evaluation.num_instances,
         }
 
-        return jsonify(response)
+        return jsonify({"status": "success", "report": report})
+
     except Exception as e:
-        return jsonify(status="error", message=str(e))
-    
+        return jsonify({"status": "error", "message": str(e)})
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+import atexit
+atexit.register(jvm.stop)
