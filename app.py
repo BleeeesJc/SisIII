@@ -8,6 +8,9 @@ from weka.core.classes import Random
 import tempfile
 import os
 import subprocess
+import matplotlib.pyplot as plt
+import numpy as np
+from collections import defaultdict
 
 app = Flask(__name__, static_folder="static")
 
@@ -67,20 +70,23 @@ def run_j48():
 def run_kmeans():
     try:
         num_clusters = int(request.json.get("num_clusters", 2))  
-        csv_path = "Restaurants.csv"
+        csv_path = "muestra_reducida100.csv"
 
         loader = Loader(classname="weka.core.converters.CSVLoader")
         data = loader.load_file(csv_path)
         data.class_index = -1
 
+        # Configurar y construir el clusterer
         clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans", options=["-N", str(num_clusters)])
         clusterer.build_clusterer(data)
 
+        # Asignar cada instancia a un cluster
         clusters = defaultdict(list)
         for instance_idx, instance in enumerate(data):
             cluster_idx = clusterer.cluster_instance(instance)
             clusters[cluster_idx].append(instance)
 
+        # Calcular los centroides manualmente
         cluster_centers = {}
         for cluster_idx, instances in clusters.items():
             cluster_centroid = {}
@@ -90,22 +96,45 @@ def run_kmeans():
                 cluster_centroid[attr_name] = sum(attr_values) / len(attr_values) if attr_values else 0.0
             cluster_centers[f"Cluster {cluster_idx + 1}"] = cluster_centroid
 
-        full_data_mean = {
-            data.attribute(idx).name: sum(instance.get_value(idx) for instance in data) / data.num_instances
-            for idx in range(data.num_attributes)
-        }
+        # Visualización de los clusters
+        data_points = np.array([[instance.get_value(i) for i in range(data.num_attributes)] for instance in data])
+        cluster_assignments = [clusterer.cluster_instance(instance) for instance in data]
 
-        cluster_distribution = []
-        for cluster_idx, instances in clusters.items():
-            count = len(instances)
-            percentage = (count / data.num_instances) * 100
-            cluster_distribution.append({"cluster": cluster_idx + 1, "count": count, "percentage": round(percentage, 2)})
+        plt.figure(figsize=(8, 6))
+        if data.num_attributes >= 2:
+            plt.scatter(data_points[:, 0], data_points[:, 1], c=cluster_assignments, cmap='viridis', s=50, label="Instancias")
+            
+            # Dibujar centroides
+            for cluster_idx, centroid in cluster_centers.items():
+                plt.scatter(
+                    [centroid[data.attribute(0).name]], 
+                    [centroid[data.attribute(1).name]], 
+                    color='red', 
+                    s=100, 
+                    label=f"Centroide {cluster_idx}",
+                    edgecolors='black'
+                )
+            plt.xlabel(data.attribute(0).name)
+            plt.ylabel(data.attribute(1).name)
+        else:
+            plt.scatter(range(len(data_points)), data_points[:, 0], c=cluster_assignments, cmap='viridis', s=50)
+            plt.xlabel("Índice de Instancia")
+            plt.ylabel(data.attribute(0).name)
+        
+        plt.title(f"KMeans Clustering (k={num_clusters})")
+        plt.colorbar(label="Cluster")
+        plt.legend()
+        plt.grid(True)
+
+        # Guardar la visualización
+        cluster_image_path = os.path.join(app.static_folder, "clusters.png")
+        plt.savefig(cluster_image_path)
+        plt.close()
 
         return jsonify({
             "status": "success",
             "cluster_centers": cluster_centers,
-            "full_data_mean": full_data_mean,
-            "cluster_distribution": cluster_distribution,
+            "cluster_image_url": "/static/clusters.png",
         })
 
     except Exception as e:
@@ -114,7 +143,7 @@ def run_kmeans():
 @app.route('/run_mlp', methods=['POST'])
 def run_mlp():
     try:
-        csv_path = "Restaurants.csv" 
+        csv_path = "muestra_reducida100.csv" 
 
         loader = Loader(classname="weka.core.converters.CSVLoader")
         data = loader.load_file(csv_path)

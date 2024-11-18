@@ -152,63 +152,60 @@
       }
 
       function runKMeans(numClusters) {
-        fetch("/run_kmeans", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ num_clusters: numClusters }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.status === "success") {
-              let resultText = `
+  fetch("/run_kmeans", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ num_clusters: numClusters }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success") {
+        let resultText = `
           <h3>Centroides Finales del Cluster:</h3>
           <table class="metric-table">
-              <tr><th>Atributo</th><th>Datos Completos</th>${Object.keys(
-                data.cluster_centers
-              )
+              <tr><th>Atributo</th>${Object.keys(data.cluster_centers)
                 .map((cluster) => `<th>${cluster}</th>`)
                 .join("")}</tr>
         `;
-              Object.keys(data.full_data_mean).forEach((attribute) => {
-                resultText += `
-              <tr>
-                  <td>${attribute}</td>
-                  <td>${data.full_data_mean[attribute].toFixed(2)}</td>
-                  ${Object.keys(data.cluster_centers)
-                    .map(
-                      (cluster) =>
-                        `<td>${data.cluster_centers[cluster][attribute].toFixed(
-                          2
-                        )}</td>`
-                    )
-                    .join("")}
-              </tr>
+        Object.keys(data.cluster_centers["Cluster 1"]).forEach((attribute) => {
+          resultText += `
+            <tr>
+                <td>${attribute}</td>
+                ${Object.keys(data.cluster_centers)
+                  .map(
+                    (cluster) =>
+                      `<td>${data.cluster_centers[cluster][attribute].toFixed(
+                        2
+                      )}</td>`
+                  )
+                  .join("")}
+            </tr>
           `;
-              });
-              resultText += `</table>`;
+        });
+        resultText += `</table>`;
 
-              resultText += `<h3>Instancias por Cluster:</h3><table class="metric-table">`;
-              data.cluster_distribution.forEach((dist) => {
-                resultText += `<tr><td>Cluster ${dist.cluster}</td><td>${dist.count} (${dist.percentage}%)</td></tr>`;
-              });
-              resultText += `</table>`;
+        // Add the image of clusters below the table
+        resultText += `
+          <img src="${data.cluster_image_url}" alt="Visualización de Clusters" style="margin-top: 20px; max-width: 100%;" />
+        `;
 
-              document.getElementById("result").innerHTML = resultText;
-              document.getElementById("result").style.display = "block";
-            } else {
-              document.getElementById("result").innerText =
-                "Error: " + data.message;
-              document.getElementById("result").style.display = "block";
-            }
-          })
-          .catch((error) => {
-            document.getElementById("result").innerText =
-              "Error en la conexión: " + error;
-            document.getElementById("result").style.display = "block";
-          });
+        document.getElementById("result").innerHTML = resultText;
+        document.getElementById("result").style.display = "block";
+      } else {
+        document.getElementById("result").innerText =
+          "Error: " + data.message;
+        document.getElementById("result").style.display = "block";
       }
+    })
+    .catch((error) => {
+      document.getElementById("result").innerText =
+        "Error en la conexión: " + error;
+      document.getElementById("result").style.display = "block";
+    });
+}
+
       function runMLP() {
         fetch("/run_mlp", {
           method: "POST",
