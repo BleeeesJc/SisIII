@@ -1,0 +1,19 @@
+python -m pip install -U networkx
+python -m pip install -U python-weka-wrapper3
+python -m pip install -U flask
+python -m pip install -U matplotlib
+python -m pip install -U numpy
+
+
+necesitan el graphviz, ponen en el buscador graphviz y entran al primero 
+https://graphviz.org/download/#mac
+lo descargan y lo instalan, ahora ahi mismo sale añadir al path lo pueden hacer directo ahi o 
+pueden poner no y lo instalan en el C en el buscador del sistema ponen variables del sistema
+variables de entorno añaden al path C:\Program Files\Graphviz\bin
+
+para java igual necesitan el jdk
+y tiene que crear un JAVA_HOME con el link de su jdk 
+y lo añaden la path como 
+%JAVA_HOME%\bin
+cierran su vscode para actualizar
+

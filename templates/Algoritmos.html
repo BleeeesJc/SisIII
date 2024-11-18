@@ -100,16 +100,13 @@
             if (data.status === "success") {
               let resultText = `
           <table class="metric-table">
-            <tr><td>Correctly Classified Instances</td><td>${
-              data.report.accuracy
-                ? (data.report.accuracy * 100).toFixed(2)
-                : "N/A"
-            } %</td></tr>
-            <tr><td>Incorrectly Classified Instances</td><td>${
-              data.report.accuracy
-                ? (100 - data.report.accuracy * 100).toFixed(2)
-                : "N/A"
-            } %</td></tr>
+            <tr><td>Correctly Classified Instances</td><td>${(
+              data.report.accuracy * 100
+            ).toFixed(2)} %</td></tr>
+            <tr><td>Incorrectly Classified Instances</td><td>${(
+              100 -
+              data.report.accuracy * 100
+            ).toFixed(2)} %</td></tr>
             <tr><td>Kappa Statistic</td><td>${
               data.report.kappa || "N/A"
             }</td></tr>
@@ -119,20 +116,19 @@
             <tr><td>Root Mean Squared Error</td><td>${
               data.report.root_mean_squared_error || "N/A"
             }</td></tr>
-            <tr><td>Relative Absolute Error</td><td>${
-              data.report.relative_absolute_error
-                ? (data.report.relative_absolute_error * 100).toFixed(2)
-                : "N/A"
-            } %</td></tr>
-            <tr><td>Root Relative Squared Error</td><td>${
-              data.report.root_relative_squared_error
-                ? (data.report.root_relative_squared_error * 100).toFixed(2)
-                : "N/A"
-            } %</td></tr>
+            <tr><td>Relative Absolute Error</td><td>${(
+              data.report.relative_absolute_error * 100
+            ).toFixed(2)} %</td></tr>
+            <tr><td>Root Relative Squared Error</td><td>${(
+              data.report.root_relative_squared_error * 100
+            ).toFixed(2)} %</td></tr>
             <tr><td>Total Number of Instances</td><td>${
               data.report.total_instances || "N/A"
             }</td></tr>
           </table>
+          <img src="${
+            data.tree_image_url
+          }" alt="Árbol de Decisiones" style="margin-top: 20px; max-width: 100%;" />
         `;
 
               document.getElementById("result").innerHTML = resultText;
@@ -149,6 +145,7 @@
             document.getElementById("result").style.display = "block";
           });
       }
+
       function promptKMeans() {
         const numClusters = prompt(
           "Ingrese el número de clusters para KMeans:"
@@ -174,35 +171,31 @@
               let resultText = `
           <h3>Centroides Finales del Cluster:</h3>
           <table class="metric-table">
-              <tr><th>Atributo</th><th>Datos Completos</th>${Object.keys(
-                data.cluster_centers
-              )
+              <tr><th>Atributo</th>${Object.keys(data.cluster_centers)
                 .map((cluster) => `<th>${cluster}</th>`)
                 .join("")}</tr>
         `;
-              Object.keys(data.full_data_mean).forEach((attribute) => {
-                resultText += `
-              <tr>
-                  <td>${attribute}</td>
-                  <td>${data.full_data_mean[attribute].toFixed(2)}</td>
-                  ${Object.keys(data.cluster_centers)
-                    .map(
-                      (cluster) =>
-                        `<td>${data.cluster_centers[cluster][attribute].toFixed(
-                          2
-                        )}</td>`
-                    )
-                    .join("")}
-              </tr>
+              Object.keys(data.cluster_centers["Cluster 1"]).forEach(
+                (attribute) => {
+                  resultText += `
+            <tr>
+                <td>${attribute}</td>
+                ${Object.keys(data.cluster_centers)
+                  .map(
+                    (cluster) =>
+                      `<td>${data.cluster_centers[cluster][attribute].toFixed(
+                        2
+                      )}</td>`
+                  )
+                  .join("")}
+            </tr>
           `;
-              });
+                }
+              );
               resultText += `</table>`;
-
-              resultText += `<h3>Instancias por Cluster:</h3><table class="metric-table">`;
-              data.cluster_distribution.forEach((dist) => {
-                resultText += `<tr><td>Cluster ${dist.cluster}</td><td>${dist.count} (${dist.percentage}%)</td></tr>`;
-              });
-              resultText += `</table>`;
+              resultText += `
+          <img src="${data.cluster_image_url}" alt="Visualización de Clusters" style="margin-top: 20px; max-width: 100%;" />
+        `;
 
               document.getElementById("result").innerHTML = resultText;
               document.getElementById("result").style.display = "block";
@@ -229,39 +222,39 @@
           .then((data) => {
             if (data.status === "success") {
               let resultText = `
-                        <table class="metric-table">
-                            <tr><td>Accuracy</td><td>${(
-                              data.report.accuracy * 100
-                            ).toFixed(2)} %</td></tr>
-                            <tr><td>Kappa Statistic</td><td>${
-                              data.report.kappa || "N/A"
-                            }</td></tr>
-                            <tr><td>Mean Absolute Error</td><td>${
-                              data.report.mean_absolute_error
-                            }</td></tr>
-                            <tr><td>Root Mean Squared Error</td><td>${
-                              data.report.root_mean_squared_error
-                            }</td></tr>
-                            <tr><td>Relative Absolute Error</td><td>${
-                              data.report.relative_absolute_error
-                                ? (
-                                    data.report.relative_absolute_error * 100
-                                  ).toFixed(2)
-                                : "N/A"
-                            } %</td></tr>
-                            <tr><td>Root Relative Squared Error</td><td>${
-                              data.report.root_relative_squared_error
-                                ? (
-                                    data.report.root_relative_squared_error *
-                                    100
-                                  ).toFixed(2)
-                                : "N/A"
-                            } %</td></tr>
-                            <tr><td>Total Instances</td><td>${
-                              data.report.total_instances
-                            }</td></tr>
-                        </table>
-                    `;
+          <table class="metric-table">
+              <tr><td>Accuracy</td><td>${(data.report.accuracy * 100).toFixed(
+                2
+              )} %</td></tr>
+              <tr><td>Kappa Statistic</td><td>${
+                data.report.kappa || "N/A"
+              }</td></tr>
+              <tr><td>Mean Absolute Error</td><td>${data.report.mean_absolute_error.toFixed(
+                4
+              )}</td></tr>
+              <tr><td>Root Mean Squared Error</td><td>${data.report.root_mean_squared_error.toFixed(
+                4
+              )}</td></tr>
+              <tr><td>Relative Absolute Error</td><td>${(
+                data.report.relative_absolute_error * 100
+              ).toFixed(2)} %</td></tr>
+              <tr><td>Root Relative Squared Error</td><td>${(
+                data.report.root_relative_squared_error * 100
+              ).toFixed(2)} %</td></tr>
+              <tr><td>Total Instances</td><td>${
+                data.report.total_instances
+              }</td></tr>
+          </table>
+        `;
+              if (data.mlp_image_url) {
+                resultText += `
+            <img src="${data.mlp_image_url}" alt="Visualización de Red Neuronal" style="margin-top: 20px; max-width: 100%;" />
+          `;
+              } else {
+                resultText += `
+            <p>No se pudo generar una representación visual de la red neuronal.</p>
+          `;
+              }
               document.getElementById("result").innerHTML = resultText;
               document.getElementById("result").style.display = "block";
             } else {
