@@ -38,7 +38,16 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+
+	<style>
+		.seo_version .bg-img-1 {
+			background-image: url("{{ url_for('static', filename='images/slider-01.jpg') }}");
+		}
+	</style>
+	
+
 </head>
+
 <body class="seo_version">
 
 	<!-- LOADER -->
@@ -82,59 +91,27 @@
 </header>
 	<!-- End header -->
     
-	<div id="slider" class="sl-slider-wrapper">
+	<div id="slider" class="sl-slider-wrapper" style="position: relative;">
+		<!-- Imagen de fondo -->
+		<img src="{{ url_for('static', filename='images/slider-01.jpg') }}" alt="Detección de diabetes" style="width: 100%; height: auto;">
+	
+		<!-- Capa oscura -->
+		<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);"></div>
+	
+		<!-- Contenido del slider -->
+		<div class="slider-content" style="position: absolute; top: 50%; left: 5%; transform: translateY(-50%); text-align: left; color: white;">
+			<!-- Título principal -->
+			<h2 style="font-size: 60px; color: white; margin-bottom: 20px;">Detección de diabetes</h2>
+			<!-- Texto descriptivo -->
+			<p style="font-size: 24px; color: #d3d3d3; margin-bottom: 30px;">Nuestro sistema está diseñado para facilitar la detección temprana y el seguimiento de la diabetes.</p>
+			<!-- Botón -->
+			<div>
+				<a href="{{ url_for('index') }}" class="bttn-new" style="background: #0594a9; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px;">Comenzar</a>
+			</div>
+		</div>
+	</div>
+	
 
-		<div class="sl-slider">
-		
-			<div class="sl-slide" data-orientation="horizontal" data-slice1-rotation="-25" data-slice2-rotation="-25" data-slice1-scale="2" data-slice2-scale="2">
-				<div class="sl-slide-inner">
-					<div class="bg-img bg-img-1"></div>
-					<h2>Detección de diabetes</h2>
-					<blockquote><p>Nuestro sistema está diseñado para facilitar la detección temprana y el seguimiento de la diabetes, proporcionando una herramienta tecnológica eficiente para el análisis y manejo de datos clínicos. ¡Descubre cómo puede apoyar tu labor profesional! </p>
-					<a href="pricing.html" class="bttn-new">Comenzar</a>
-					</blockquote>
-				</div>
-			</div>
-			
-			<div class="sl-slide" data-orientation="vertical" data-slice1-rotation="10" data-slice2-rotation="-15" data-slice1-scale="1.5" data-slice2-scale="1.5">
-				<div class="sl-slide-inner">
-					<div class="bg-img bg-img-2"></div>
-					<h2>Marketing Website</h2>
-					<blockquote><p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque. </p>
-					<a href="#" class="bttn-new">Started Today</a>
-					</blockquote>
-				</div>
-			</div>
-			
-			<div class="sl-slide" data-orientation="horizontal" data-slice1-rotation="3" data-slice2-rotation="3" data-slice1-scale="2" data-slice2-scale="1">
-				<div class="sl-slide-inner">
-					<div class="bg-img bg-img-3"></div>
-					<h2>Search engine, Analytics, Traffic</h2>
-					<blockquote><p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque. </p>
-					<a href="#" class="bttn-new">Started Today</a>
-					</blockquote>
-				</div>
-			</div>
-			
-			<div class="sl-slide" data-orientation="vertical" data-slice1-rotation="-5" data-slice2-rotation="25" data-slice1-scale="2" data-slice2-scale="1">
-				<div class="sl-slide-inner">
-					<div class="bg-img bg-img-4"></div>
-					<h2>Social Networking</h2>
-					<blockquote><p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque. </p>
-					<a href="#" class="bttn-new">Started Today</a>
-					</blockquote>
-				</div>
-			</div>
-		</div><!-- /sl-slider -->
-
-		<nav id="nav-dots" class="nav-dots">
-			<span class="nav-dot-current"></span>
-			<span></span>
-			<span></span>
-			<span></span>
-		</nav>
-
-	</div><!-- /slider-wrapper -->
 
     <div id="about" class="section wb nopadtop">
         <div class="container">
@@ -283,7 +260,7 @@
             </div><!-- end row -->
         </div><!-- end container -->
     </div><!-- end section -->
-	
+
 
     <div id="support" class="section db">
         <div class="container">
