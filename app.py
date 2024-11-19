@@ -27,6 +27,10 @@ print("JVM iniciada con éxito.")
 def index():
     return render_template('pricing.html')
 
+@app.route('/home')
+def home():
+    return render_template('index.html')
+
 @app.route('/run_<algorithm>', methods=['POST'])
 def run_algorithm(algorithm):
     try:

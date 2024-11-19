@@ -15,19 +15,22 @@
     <meta name="author" content="">
 
     <!-- Site Icons -->
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon" />
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <!-- Site CSS -->
-    <link rel="stylesheet" href="style.css">
-    <!-- ALL VERSION CSS -->
-    <link rel="stylesheet" href="css/versions.css">
-    <!-- Responsive CSS -->
-    <link rel="stylesheet" href="css/responsive.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/custom.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/versions.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/flaticon.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/prettyPhoto.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slit-custom.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tippy.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+
 	
 	<script src="js/modernizr.custom.79639.js"></script>
     <!--[if lt IE 9]>
@@ -52,71 +55,83 @@
 	<!-- END LOADER -->
 	
 	<!-- Start header -->
-	<header class="top-navbar">
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<div class="container">
-				<a class="navbar-brand" href="index.html">
-					<img src="images/logo-seo.png" alt="" />
-				</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars-seo" aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
-				  <span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbars-seo">
-					<ul class="navbar-nav ml-auto">
-						<li class="nav-item active"><a class="nav-link" href="index.html">Home</a></li>
-						<li class="nav-item"><a class="nav-link" href="/templates/pricing.html">Algoritmos</a></li>
-						<li class="nav-item"><a class="nav-link" href="contact.html">Registrate</a></li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-	</header>
+<!-- Start header -->
+<!-- Start header -->
+<header class="top-navbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}" alt="Vitalcheck Logo" style="max-height: 50px;" />
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars-seo"
+                aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbars-seo">
+                <ul class="navbar-nav ml-auto">
+                    <!-- Enlace actualizado para Home -->
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
+                    <!-- Enlace actualizado para Algoritmos -->
+                    <li class="nav-item active"><a class="nav-link" href="{{ url_for('index') }}">Algoritmos</a></li>
+                    <!-- Enlace original para Registrate -->
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Registrate</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
 	<!-- End header -->
     
-    <div id="slider" class="sl-slider-wrapper">
+	<div id="slider" class="sl-slider-wrapper">
 
 		<div class="sl-slider">
-		
+	
 			<div class="sl-slide" data-orientation="horizontal" data-slice1-rotation="-25" data-slice2-rotation="-25" data-slice1-scale="2" data-slice2-scale="2">
 				<div class="sl-slide-inner">
-					<div class="bg-img bg-img-1"></div>
+					<div class="bg-img" style="background-image: url('{{ url_for('static', filename='images/slider-01.jpg') }}');"></div>
 					<h2>Detección de diabetes</h2>
-					<blockquote><p>Nuestro sistema está diseñado para facilitar la detección temprana y el seguimiento de la diabetes, proporcionando una herramienta tecnológica eficiente para el análisis y manejo de datos clínicos. ¡Descubre cómo puede apoyar tu labor profesional! </p>
-					<a href="pricing.html" class="bttn-new">Comenzar</a>
+					<blockquote>
+						<p>Nuestro sistema está diseñado para facilitar la detección temprana y el seguimiento de la diabetes, proporcionando una herramienta tecnológica eficiente para el análisis y manejo de datos clínicos. ¡Descubre cómo puede apoyar tu labor profesional!</p>
+						<a href="pricing.html" class="bttn-new">Comenzar</a>
 					</blockquote>
 				</div>
 			</div>
-			
+	
 			<div class="sl-slide" data-orientation="vertical" data-slice1-rotation="10" data-slice2-rotation="-15" data-slice1-scale="1.5" data-slice2-scale="1.5">
 				<div class="sl-slide-inner">
-					<div class="bg-img bg-img-2"></div>
+					<div class="bg-img" style="background-image: url('{{ url_for('static', filename='images/slider-02.jpg') }}');"></div>
 					<h2>Marketing Website</h2>
-					<blockquote><p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque. </p>
-					<a href="#" class="bttn-new">Started Today</a>
+					<blockquote>
+						<p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque.</p>
+						<a href="#" class="bttn-new">Started Today</a>
 					</blockquote>
 				</div>
 			</div>
-			
+	
 			<div class="sl-slide" data-orientation="horizontal" data-slice1-rotation="3" data-slice2-rotation="3" data-slice1-scale="2" data-slice2-scale="1">
 				<div class="sl-slide-inner">
-					<div class="bg-img bg-img-3"></div>
+					<div class="bg-img" style="background-image: url('{{ url_for('static', filename='images/slider-03.jpg') }}');"></div>
 					<h2>Search engine, Analytics, Traffic</h2>
-					<blockquote><p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque. </p>
-					<a href="#" class="bttn-new">Started Today</a>
+					<blockquote>
+						<p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque.</p>
+						<a href="#" class="bttn-new">Started Today</a>
 					</blockquote>
 				</div>
 			</div>
-			
+	
 			<div class="sl-slide" data-orientation="vertical" data-slice1-rotation="-5" data-slice2-rotation="25" data-slice1-scale="2" data-slice2-scale="1">
 				<div class="sl-slide-inner">
-					<div class="bg-img bg-img-4"></div>
+					<div class="bg-img" style="background-image: url('{{ url_for('static', filename='images/slider-04.jpg') }}');"></div>
 					<h2>Social Networking</h2>
-					<blockquote><p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque. </p>
-					<a href="#" class="bttn-new">Started Today</a>
+					<blockquote>
+						<p>Etiam felis elit, mollis posuere accumsan ac, dignissim a ligula. Nam ullamcorper ornare tortor sed dapibus. Aliquam ultrices vestibulum sodales. Aenean efficitur massa vel tellus dapibus pellentesque.</p>
+						<a href="#" class="bttn-new">Started Today</a>
 					</blockquote>
 				</div>
 			</div>
 		</div><!-- /sl-slider -->
+	</div><!-- /slider-wrapper -->
+	
 
 		<nav id="nav-dots" class="nav-dots">
 			<span class="nav-dot-current"></span>
@@ -145,7 +160,7 @@
 				
                 <div class="col-md-6">
                     <div class="post-media wow fadeIn">
-                        <img src="images/about_01.jpg" alt="" class="img-fluid">
+                        <img src="{{ url_for('static', filename='images/about_01.jpg') }}" alt="" class="img-fluid">
                     </div><!-- end media -->
                 </div><!-- end col -->
                 
@@ -185,7 +200,7 @@
 			<div class="seo-services row clearfix">
                 <div class="col-md-6 col-xs-12">
 					<div class="why-img-box">
-						<img src="images/why-img-01.jpg" class="img-fluid" alt="" />
+						<img src="{{ url_for('static', filename='images/seo_01.png') }}" alt="" class="img-fluid img-rounded">
 					</div>
                 </div><!-- end col -->
 
@@ -214,7 +229,7 @@
 					<div class="text-center">
 						<div class="service-widget">
 							<div class="post-media wow fadeIn">
-								<img src="images/seo_01.png" alt="" class="img-fluid img-rounded">
+								<img src="{{ url_for('static', filename='images/seo_01.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
 							<h3>Análisis de Factores Clave</h3>
 							<p> Identificando y comprendiendo los elementos médicos, genéticos y de estilo de vida que influyen en las condiciones prediabéticas y diabéticas.</p>
@@ -224,7 +239,7 @@
 					<div class="text-center">
 						<div class="service-widget">
 							<div class="post-media wow fadeIn">
-								<img src="images/seo_02.png" alt="" class="img-fluid img-rounded">
+								<img src="{{ url_for('static', filename='images/seo_02.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
 							<h3>Modelos</h3>
 							<p>Desarrollando modelos que correlacionen los datos médicos y genéticos claves para optimizar la detección temprana y el manejo de pacientes. </p>
@@ -234,7 +249,7 @@
 					<div class="text-center">
 						<div class="service-widget">
 							<div class="post-media wow fadeIn">
-								<img src="images/seo_03.png" alt="" class="img-fluid img-rounded">
+								<img src="{{ url_for('static', filename='images/seo_03.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
 							<h3>Interfaz Fácil e Intuitiva</h3>
 							<p>Diseñando una interfaz accesible que facilite la interpretación de datos y mejore la toma de decisiones clínicas.</p>
@@ -244,7 +259,7 @@
 					<div class="text-center">
 						<div class="service-widget">
 							<div class="post-media wow fadeIn">
-								<img src="images/seo_04.png" alt="" class="img-fluid img-rounded">
+								<img src="{{ url_for('static', filename='images/seo_04.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
 							<h3>Website Development</h3>
 							<p>Aliquam sagittis ligula et sem lacinia, ut facilisis enim sollicitudin. Proin nisi est, convallis nec purus vitae, iaculis posuere sapien. Cum sociis natoque.</p>
@@ -254,7 +269,7 @@
 					<div class="text-center">
 						<div class="service-widget">
 							<div class="post-media wow fadeIn">
-								<img src="images/seo_05.png" alt="" class="img-fluid img-rounded">
+								<img src="{{ url_for('static', filename='images/seo_05.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
 							<h3>Reporting</h3>
 							<p>Duis at tellus at dui tincidunt scelerisque nec sed felis. Suspendisse id dolor sed leo rutrum euismod. Nullam vestibulum fermentum erat. It nam auctor. </p>
@@ -264,7 +279,7 @@
 					<div class="text-center">
 						<div class="service-widget">
 							<div class="post-media wow fadeIn">
-								<img src="images/seo_06.png" alt="" class="img-fluid img-rounded">
+								<img src="{{ url_for('static', filename='images/seo_06.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
 							<h3>Social Media Marketing</h3>
 							<p>Etiam materials ut mollis tellus, vel posuere nulla. Etiam sit amet lacus vitae massa sodales aliquam at eget quam. Integer ultricies et magna quis accumsan.</p>
@@ -381,7 +396,7 @@
                 <div class="col-lg-4 col-md-6 col-xs-12">
                     <div class="widget clearfix">
                         <div class="widget-title">
-                            <img src="images/logo-light.png" alt="">
+							<img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}" alt="Vitalcheck Logo" style="max-height: 50px;" />
                         </div>
                         <p> Sistema de información orientado al manejo de datos para la identificación temprana y seguimiento de condiciones prediabéticas y diabéticas</p>
                         <p>Si tienes alguna duda o problema no dudes en contactarnos, nuestros correos electrónicos se encuentran a continuación</p>
@@ -463,13 +478,10 @@
     <a href="#" id="scroll-to-top" class="dmtop global-radius"><i class="fa fa-angle-up"></i></a>
 
     <!-- ALL JS FILES -->
-    <script src="js/all.js"></script>
-    <!-- ALL PLUGINS -->
-	<script src="js/tippy.all.min.js"></script>
-    <script src="js/custom.js"></script>
+	<script src="{{ url_for('static', filename='js/all.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/tippy.all.min.js') }}"></script>
 	
-	<script src="js/jquery.ba-cond.min.js"></script>
-	<script src="js/jquery.slitslider.js"></script>
 	<script type="text/javascript">	
 			$(function() {
 			
