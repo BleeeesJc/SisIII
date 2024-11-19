@@ -23,11 +23,11 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 jvm.start(max_heap_size="8g")
 print("JVM iniciada con éxito.")
 
-@app.route('/')
+@app.route('/home')
 def index():
     return render_template('pricing.html')
 
-@app.route('/home')
+@app.route('/')
 def home():
     return render_template('index.html')
 
@@ -61,7 +61,7 @@ def run_algorithm(algorithm):
 
 def run_j48(csv_path):
     try:
-        loader = Loader(classname="weka.core.converters.CSVLoader", options=["-F", ";"])  # Para archivos con punto y coma
+        loader = Loader(classname="weka.core.converters.CSVLoader")  # Para archivos con punto y coma
         data = loader.load_file(csv_path)
         data.class_is_last()
 
@@ -100,7 +100,7 @@ def run_j48(csv_path):
 
 def run_kmeans(csv_path, num_clusters):
     try:
-        loader = Loader(classname="weka.core.converters.CSVLoader", options=["-F", ";"])  # Para archivos con punto y coma
+        loader = Loader(classname="weka.core.converters.CSVLoader")  # Para archivos con punto y coma
         data = loader.load_file(csv_path)
         data.class_index = -1
 
@@ -163,7 +163,7 @@ def run_kmeans(csv_path, num_clusters):
 
 def run_mlp(csv_path):
     try:
-        loader = Loader(classname="weka.core.converters.CSVLoader", options=["-F", ";"])  # Para archivos con punto y coma
+        loader = Loader(classname="weka.core.converters.CSVLoader")  # Para archivos con punto y coma
         data = loader.load_file(csv_path)
         data.class_is_last()
 
