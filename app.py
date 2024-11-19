@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request,render_template
+from flask import Flask, jsonify, request, render_template, send_from_directory
 import weka.core.jvm as jvm
 from weka.clusterers import Clusterer
 from weka.classifiers import Classifier, Evaluation
@@ -10,24 +10,54 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
 import networkx as nx
+from werkzeug.utils import secure_filename
 
-app = Flask(__name__, static_folder="static")
+app = Flask(__name__, static_folder="static", template_folder="templates")
 
-jvm.start()
+# Directorio temporal para almacenar archivos subidos
+UPLOAD_FOLDER = "uploads"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-jvm.start()
+# Iniciar JVM de Weka
+jvm.start(max_heap_size="8g")
+print("JVM iniciada con éxito.")
 
 @app.route('/')
 def index():
-    return render_template('Algoritmos.html')
+    return render_template('pricing.html')
 
-
-@app.route('/run_j48', methods=['POST'])
-def run_j48():
+@app.route('/run_<algorithm>', methods=['POST'])
+def run_algorithm(algorithm):
     try:
-        csv_path = "muestra_reducida100.csv"  
+        if 'csv_file' not in request.files:
+            return jsonify({"status": "error", "message": "No se proporcionó ningún archivo."})
+        
+        file = request.files['csv_file']
+        if file.filename == '':
+            return jsonify({"status": "error", "message": "El archivo tiene un nombre vacío."})
 
-        loader = Loader(classname="weka.core.converters.CSVLoader")
+        # Guardar el archivo subido temporalmente
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        # Llamar al algoritmo seleccionado
+        if algorithm == "j48":
+            return run_j48(filepath)
+        elif algorithm == "kmeans":
+            num_clusters = int(request.form.get("num_clusters", 2))  # Opcional para KMeans
+            return run_kmeans(filepath, num_clusters)
+        elif algorithm == "mlp":
+            return run_mlp(filepath)
+        else:
+            return jsonify({"status": "error", "message": f"Algoritmo desconocido: {algorithm}"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
+def run_j48(csv_path):
+    try:
+        loader = Loader(classname="weka.core.converters.CSVLoader", options=["-F", ";"])  # Para archivos con punto y coma
         data = loader.load_file(csv_path)
         data.class_is_last()
 
@@ -37,9 +67,6 @@ def run_j48():
         dot_path = os.path.join(app.static_folder, "tree.dot")
         with open(dot_path, "w") as dot_file:
             dot_file.write(classifier.graph)
-
-        if not os.path.exists(dot_path):
-            raise Exception(f"El archivo DOT no existe: {dot_path}")
 
         png_path = os.path.join(app.static_folder, "tree.png")
         command = ["dot", "-Tpng", dot_path, "-o", png_path]
@@ -67,13 +94,9 @@ def run_j48():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
-@app.route('/run_kmeans', methods=['POST'])
-def run_kmeans():
+def run_kmeans(csv_path, num_clusters):
     try:
-        num_clusters = int(request.json.get("num_clusters", 2))  
-        csv_path = "muestra_reducida100.csv"
-
-        loader = Loader(classname="weka.core.converters.CSVLoader")
+        loader = Loader(classname="weka.core.converters.CSVLoader", options=["-F", ";"])  # Para archivos con punto y coma
         data = loader.load_file(csv_path)
         data.class_index = -1
 
@@ -100,7 +123,6 @@ def run_kmeans():
         plt.figure(figsize=(8, 6))
         if data.num_attributes >= 2:
             plt.scatter(data_points[:, 0], data_points[:, 1], c=cluster_assignments, cmap='viridis', s=50, label="Instancias")
-            
             for cluster_idx, centroid in cluster_centers.items():
                 plt.scatter(
                     [centroid[data.attribute(0).name]], 
@@ -135,12 +157,9 @@ def run_kmeans():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
-@app.route('/run_mlp', methods=['POST'])
-def run_mlp():
+def run_mlp(csv_path):
     try:
-        csv_path = "muestra_reducida100.csv"
-
-        loader = Loader(classname="weka.core.converters.CSVLoader")
+        loader = Loader(classname="weka.core.converters.CSVLoader", options=["-F", ";"])  # Para archivos con punto y coma
         data = loader.load_file(csv_path)
         data.class_is_last()
 
@@ -167,7 +186,6 @@ def run_mlp():
             layers = [input_size, hidden_size, output_size]
             G = nx.DiGraph()
             pos = {}
-
             y_offset = 0
             for layer_idx, layer_size in enumerate(layers):
                 x_offset = 0
@@ -186,15 +204,14 @@ def run_mlp():
             nx.draw(
                 G, pos, with_labels=False, node_size=1000, node_color="skyblue", edge_color="gray", arrows=True
             )
-            for layer_idx, layer_size in enumerate(layers):
-                plt.text(layer_idx, 0, f"Layer {layer_idx + 1}", fontsize=12, ha="center")
             plt.title("Neural Network Visualization")
             plt.axis("off")
 
-        input_size = data.num_attributes - 1 
-        hidden_size = 10 
-        output_size = data.class_attribute.num_values  
+        input_size = data.num_attributes - 1
+        hidden_size = 10
+        output_size = data.class_attribute.num_values
         plot_neural_network(input_size, hidden_size, output_size)
+
         mlp_image_path = os.path.join(app.static_folder, "mlp_network.png")
         plt.savefig(mlp_image_path)
         plt.close()

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Basic -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Site Metas -->
+<title>Greatseo - Bootstrap 4 Responsive HTML5 Template</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!-- Site Icons -->
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/versions.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/flaticon.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/prettyPhoto.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slit-custom.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tippy.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+
+
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body class="seo_version">
+
+    <!-- LOADER -->
+    <div id="preloader">
+        <div class="loader-wrapper">
+            <div class="loader-new">
+                <div class="ball"></div>
+                <div class="ball"></div>
+                <div class="ball"></div>
+            </div>
+            <div class="text">LOADING...</div>
+        </div>
+    </div>
+    <!-- END LOADER -->
+
+    <!-- Start header -->
+    <header class="top-navbar">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="{{ url_for('static', filename='images/logo-seo.png') }}" alt="Logo" />
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars-seo"
+                    aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbars-seo">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item active"><a class="nav-link" href="pricing.html">Algoritmos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact.html">Registrate</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="all-page-title"
+        style="background-image:url({{ url_for('static', filename='images/pattern-4.png') }}); position: relative;">
+        <div
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1;">
+        </div>
+        <div class="container text-center" style="position: relative; z-index: 2;">
+            <h1 style="color: white;">Subir Archivo CSV</h1>
+            <p style="color: white;">Sube un archivo CSV para procesar los datos y analizar la información de manera
+                eficiente.</p>
+            <form id="csv-form" action="#" method="POST" enctype="multipart/form-data" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label for="file-upload" class="custom-file-upload">Seleccionar Archivo</label>
+                    <input id="file-upload" type="file" name="csv_file" accept=".csv" required>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Estilo del botón de selección de archivo */
+        .custom-file-upload {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #0056b3;
+        }
+
+        /* Ocultar el botón original */
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+
+
+    <div id="pricing" class="section wb">
+        <div class="container">
+            <div class="section-title text-center">
+                <h3>Algoritmos</h3>
+                <p class="lead">Selecciona uno de los tres algoritmos disponibles para procesar tus datos</p>
+            </div><!-- end title -->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pricing pricing-palden">
+                        <div class="pricing-item">
+                            <div class="pricing-deco">
+                                <div class="pricing-price">
+                                    <h3 class="pricing-title" style="font-size: 1.5rem;">Árbol de Decisiones</h3>
+                                </div>
+                            </div>
+                            <ul class="pricing-feature-list">
+                                <li class="pricing-feature">Este algoritmo crea árboles de decisión para clasificar
+                                    datos. Es útil para analizar información médica y hacer predicciones, como
+                                    identificar riesgos de diabetes basados en niveles de glucosa o historial familiar.
+                                </li>
+                            </ul>
+                            <button class="bttn-new-a" onclick="chooseAlgorithm('j48')">Elegir</button>
+                        </div>
+                        <div class="pricing-item pricing__item--featured">
+                            <div class="pricing-deco">
+                                <div class="pricing-price">
+                                    <h3 class="pricing-title" style="font-size: 1.5rem;">Clustering</h3>
+                                </div>
+                            </div>
+                            <ul class="pricing-feature-list">
+                                <li class="pricing-feature">El Clustering agrupa datos similares en categorías. Esto
+                                    ayuda a encontrar patrones entre pacientes, como factores de riesgo comunes o
+                                    perfiles de estilo de vida relacionados con la diabetes.</li>
+                            </ul>
+                            <button class="bttn-new-a" onclick="chooseAlgorithm('kmeans')">Elegir</button>
+                        </div>
+                        <div class="pricing-item">
+                            <div class="pricing-deco">
+                                <div class="pricing-price">
+                                    <h3 class="pricing-title" style="font-size: 1.5rem;">Red Neuronal</h3>
+                                </div>
+                            </div>
+                            <ul class="pricing-feature-list">
+                                <li class="pricing-feature">Las redes neuronales imitan el funcionamiento del cerebro
+                                    para analizar datos complejos. Se utilizan para predecir riesgos de diabetes
+                                    considerando múltiples factores, como hábitos y genética.</li>
+                            </ul>
+                            <button class="bttn-new-a" onclick="chooseAlgorithm('mlp')">Elegir</button>
+                        </div>
+                    </div>
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </div><!-- end section -->
+
+    <div class="btn-submit-container">
+        <button type="submit" class="bttn-new-a" onclick="submitForm()">Generar resultados</button>
+    </div>
+
+    <div id="result" style="margin-top: 20px; display: none;">
+        <!-- Aquí se mostrarán los resultados -->
+    </div>
+
+    <div id="testimonials" class="section wb">
+        <div class="container">
+            <div class="section-title text-center">
+                <h3>Happy Clients</h3>
+                <p class="lead">We thanks for all our awesome testimonials! There are hundreds of our happy customers!
+                    <br>Let's see what others say about Landigoo website template!
+                </p>
+            </div><!-- end title -->
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="testi-carousel owl-carousel owl-theme">
+                        <div class="testimonial clearfix">
+                            <div class="testi-meta">
+                                <img src="images/testi_01.png" alt="" class="img-fluid alignleft">
+                                <h4>James Fernando <small>- Manager of Racer</small></h4>
+                            </div>
+                            <!-- end testi-meta -->
+                            <div class="desc">
+                                <h3><i class="fa fa-quote-left"></i> Wonderful Support! <i
+                                        class="fa fa-quote-right"></i></h3>
+                                <p>They have got my project on time with the competition with a sed highly skilled, and
+                                    experienced & professional team.</p>
+                            </div>
+                        </div>
+                        <!-- end testimonial -->
+
+                        <div class="testimonial clearfix">
+                            <div class="testi-meta">
+                                <img src="images/testi_02.png" alt="" class="img-fluid alignleft">
+                                <h4>Jacques Philips <small>- Designer</small></h4>
+                            </div>
+                            <!-- end testi-meta -->
+                            <div class="desc">
+                                <h3><i class="fa fa-quote-left"></i> Awesome Services! <i class="fa fa-quote-right"></i>
+                                </h3>
+                                <p>Explain to you how all this mistaken idea of denouncing pleasure and praising pain
+                                    was born and I will give you completed.</p>
+                            </div>
+                        </div>
+                        <!-- end testimonial -->
+
+                        <div class="testimonial clearfix">
+                            <div class="testi-meta">
+                                <img src="images/testi_03.png" alt="" class="img-fluid alignleft">
+                                <h4>Venanda Mercy <small>- Newyork City</small></h4>
+                            </div>
+                            <!-- end testi-meta -->
+                            <div class="desc">
+                                <h3><i class="fa fa-quote-left"></i> Great & Talented Team! <i
+                                        class="fa fa-quote-right"></i></h3>
+                                <p>The master-builder of human happines no one rejects, dislikes avoids pleasure itself,
+                                    because it is very pursue pleasure. </p>
+                            </div>
+                        </div>
+                        <!-- end testimonial -->
+                        <div class="testimonial clearfix">
+                            <div class="testi-meta">
+                                <img src="images/testi_01.png" alt="" class="img-fluid alignleft">
+                                <h4>James Fernando <small>- Manager of Racer</small></h4>
+                            </div>
+                            <!-- end testi-meta -->
+                            <div class="desc">
+                                <h3><i class="fa fa-quote-left"></i> Wonderful Support! <i
+                                        class="fa fa-quote-right"></i></h3>
+                                <p>They have got my project on time with the competition with a sed highly skilled, and
+                                    experienced & professional team.</p>
+                            </div>
+                        </div>
+                        <!-- end testimonial -->
+
+                        <div class="testimonial clearfix">
+                            <div class="testi-meta">
+                                <img src="images/testi_02.png" alt="" class="img-fluid alignleft">
+                                <h4>Jacques Philips <small>- Designer</small></h4>
+                            </div>
+                            <!-- end testi-meta -->
+                            <div class="desc">
+                                <h3><i class="fa fa-quote-left"></i> Awesome Services! <i class="fa fa-quote-right"></i>
+                                </h3>
+                                <p>Explain to you how all this mistaken idea of denouncing pleasure and praising pain
+                                    was born and I will give you completed.</p>
+                            </div>
+                        </div>
+                        <!-- end testimonial -->
+
+                        <div class="testimonial clearfix">
+                            <div class="testi-meta">
+                                <img src="images/testi_03.png" alt="" class="img-fluid alignleft">
+                                <h4>Venanda Mercy <small>- Newyork City</small></h4>
+                            </div>
+                            <!-- end testi-meta -->
+                            <div class="desc">
+                                <h3><i class="fa fa-quote-left"></i> Great & Talented Team! <i
+                                        class="fa fa-quote-right"></i></h3>
+                                <p>The master-builder of human happines no one rejects, dislikes avoids pleasure itself,
+                                    because it is very pursue pleasure. </p>
+                            </div>
+                        </div><!-- end testimonial -->
+                    </div><!-- end carousel -->
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </div><!-- end section -->
+
+    <div id="support" class="section db">
+        <div class="container">
+            <div class="row">
+                <div id="logo-carousel" class="owl-carousel">
+                </div>
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </div><!-- end section -->
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-xs-12">
+                    <div class="widget clearfix">
+                        <div class="widget-title">
+                            <img src="images/logo-light.png" alt="">
+                        </div>
+                        <p> Sistema de información orientado al manejo de datos para la identificación temprana y
+                            seguimiento de condiciones prediabéticas y diabéticas</p>
+                        <p>Si tienes alguna duda o problema no dudes en contactarnos, nuestros correos electrónicos se
+                            encuentran a continuación</p>
+                    </div><!-- end clearfix -->
+                </div><!-- end col -->
+
+                <div class="col-lg-2 col-md-6 col-xs-12">
+                    <div class="widget clearfix">
+                        <div class="widget-title">
+                            <h3>Information</h3>
+                        </div>
+                        <ul class="footer-links">
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Algoritmos</a></li>
+                            <li><a href="#">Registrate</a></li>
+                        </ul><!-- end links -->
+                    </div><!-- end clearfix -->
+                </div><!-- end col -->
+
+                <div class="col-lg-3 col-md-6 col-xs-12">
+                    <div class="widget clearfix">
+                        <div class="widget-title">
+                            <h3>Newsletter</h3>
+                        </div>
+                        <p>Si quieres que te lleguen las últimas noticias y actualizaciones del sistema de información,
+                            por favor deja tu correo</p>
+                        <div class="news-box">
+                            <form action="#" method="post">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Email address" type="email">
+                                    <button type="submit">
+                                        <svg id="Layer_11" data-name="Layer 11" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 25.19 17.71">
+                                            <path class="cls-1"
+                                                d="M311,387.93a.89.89,0,0,0-1.27,1.26l6.44,6.44H295a.89.89,0,0,0-.89.89.9.9,0,0,0,.89.9h21.24l-6.44,6.42a.91.91,0,0,0,0,1.27.89.89,0,0,0,1.27,0l8-8a.87.87,0,0,0,0-1.25Z"
+                                                transform="translate(-294.08 -387.67)"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="widget-title">
+                            <h3>Redes Sociales</h3>
+                        </div>
+                        <ul class="footer-links social-md">
+                            <li><a class="fb btn-a" title="Facebook" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-facebook"></i></a></li>
+                            <li><a class="gi btn-a" title="Github" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-github"></i> </a></li>
+                            <li><a class="tw btn-a" title="Twitter" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-twitter"></i> </a></li>
+                            <li><a class="dr btn-a" title="Dribbble" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-dribbble"></i> </a></li>
+                            <li><a class="pi btn-a" title="Pinterest" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-pinterest"></i> </a></li>
+                        </ul><!-- end links -->
+                    </div><!-- end clearfix -->
+                </div><!-- end col -->
+
+                <div class="col-lg-3 col-md-6 col-xs-12">
+                    <div class="widget clearfix">
+                        <div class="widget-title">
+                            <h3>Detalles de Contacto</h3>
+                        </div>
+
+                        <ul class="footer-links">
+                            <li><a href="mailto:#">dominicescalante@gmail.com</a></li>
+                            <li><a href="#">fmattosteran@gmail.com</a></li>
+                            <li>jared170209@gmail.com</li>
+                            <li>mateovalenxd@gmail.com</li>
+                        </ul><!-- end links -->
+                    </div><!-- end clearfix -->
+                </div><!-- end col -->
+
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </footer><!-- end footer -->
+
+    <div class="copyrights">
+        <div class="container">
+            <div class="footer-distributed">
+                <div class="footer-left">
+                </div>
+            </div>
+        </div><!-- end container -->
+    </div><!-- end copyrights -->
+
+    <a href="#" id="scroll-to-top" class="dmtop global-radius"><i class="fa fa-angle-up"></i></a>
+
+    <!-- ALL JS FILES -->
+    <script src="{{ url_for('static', filename='js/all.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tippy.all.min.js') }}"></script>
+    <script>
+        let selectedAlgorithm = null;
+
+        function chooseAlgorithm(algorithm) {
+            selectedAlgorithm = algorithm;
+            alert(`Has seleccionado el algoritmo: ${algorithm}`);
+        }
+
+        function submitForm() {
+            if (!selectedAlgorithm) {
+                alert("Por favor, selecciona un algoritmo primero.");
+                return;
+            }
+
+            let numClusters = null;
+
+            // Si el algoritmo seleccionado es KMeans, pedir número de clusters
+            if (selectedAlgorithm === "kmeans") {
+                numClusters = prompt("Por favor, ingrese el número de clusters (k):");
+                if (!numClusters || isNaN(numClusters) || numClusters <= 0) {
+                    alert("Debes ingresar un número válido de clusters.");
+                    return;
+                }
+            }
+
+            const form = document.getElementById("csv-form");
+            const formData = new FormData(form);
+
+            formData.append("algorithm", selectedAlgorithm);
+            if (numClusters) formData.append("num_clusters", numClusters); // Agregar número de clusters si aplica
+
+            fetch(`/run_${selectedAlgorithm}`, {
+                method: "POST",
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    let contentHTML = ""; // Resetear contenido
+
+                    // Crear tabla para J48 y MLP
+                    if (selectedAlgorithm !== "kmeans" && data.report) {
+                        contentHTML += `
+                    <div style="text-align: center; margin-top: 20px;">
+                        <h3>Resultados:</h3>
+                        <table border="1" style="width: 50%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: #f2f2f2;">
+                                    <th style="padding: 10px;">Métrica</th>
+                                    <th style="padding: 10px;">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                        for (let key in data.report) {
+                            contentHTML += `
+                        <tr>
+                            <td style="padding: 10px;">${key}</td>
+                            <td style="padding: 10px;">${data.report[key]}</td>
+                        </tr>`;
+                        }
+                        contentHTML += `</tbody></table></div>`;
+                    }
+
+                    // Crear tabla específica para KMeans
+                    if (selectedAlgorithm === "kmeans" && data.cluster_centers) {
+                        contentHTML += `
+                    <div style="text-align: center; margin-top: 20px;">
+                        <h3>Centroides de los Clusters:</h3>
+                        <table border="1" style="width: 70%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: #f2f2f2;">
+                                    <th style="padding: 10px;">Atributo</th>`;
+                        for (let cluster in data.cluster_centers) {
+                            contentHTML += `<th style="padding: 10px;">${cluster}</th>`;
+                        }
+                        contentHTML += `</tr></thead><tbody>`;
+                        const attributes = Object.keys(data.cluster_centers[Object.keys(data.cluster_centers)[0]]);
+                        for (let attribute of attributes) {
+                            contentHTML += `<tr><td style="padding: 10px;">${attribute}</td>`;
+                            for (let cluster in data.cluster_centers) {
+                                contentHTML += `<td style="padding: 10px;">${data.cluster_centers[cluster][attribute].toFixed(2)}</td>`;
+                            }
+                            contentHTML += `</tr>`;
+                        }
+                        contentHTML += `</tbody></table></div>`;
+                    }
+
+                    // Crear imagen si está disponible
+                    if (data.tree_image_url || data.cluster_image_url || data.mlp_image_url) {
+                        contentHTML += `
+                    <div style="text-align: center; margin-top: 20px;">
+                        <img src="${data.tree_image_url || data.cluster_image_url || data.mlp_image_url}" 
+                        alt="Visualización" style="max-width: 70%; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
+                    </div>`;
+                    }
+
+                    // Mostrar resultados
+                    document.getElementById("result").innerHTML = contentHTML;
+                    document.getElementById("result").style.display = "block";
+                })
+                .catch((error) => {
+                    document.getElementById("result").innerHTML = `
+                <div style="text-align: center; margin-top: 20px; color: red;">
+                    Error en la conexión: ${error}
+                </div>`;
+                    document.getElementById("result").style.display = "block";
+                });
+        }
+    </script>
+
+</body>
+
+</html>
