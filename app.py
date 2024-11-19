@@ -1,9 +1,4 @@
-from flask import Flask, jsonify, request, render_template, send_from_directory
-import weka.core.jvm as jvm
-from weka.clusterers import Clusterer
-from weka.classifiers import Classifier, Evaluation
-from weka.core.converters import Loader
-from weka.core.classes import Random
+from flask import Flask, jsonify, request, render_template
 import os
 import subprocess
 import matplotlib.pyplot as plt
@@ -11,6 +6,13 @@ import numpy as np
 from collections import defaultdict
 import networkx as nx
 from werkzeug.utils import secure_filename
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.cluster import KMeans
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import classification_report, accuracy_score, mean_absolute_error, mean_squared_error, confusion_matrix
+from sklearn.model_selection import train_test_split
+import pandas as pd
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
@@ -18,10 +20,6 @@ app = Flask(__name__, static_folder="static", template_folder="templates")
 UPLOAD_FOLDER = "uploads"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# Iniciar JVM de Weka
-jvm.start(max_heap_size="8g")
-print("JVM iniciada con éxito.")
 
 @app.route('/home')
 def index():
@@ -61,88 +59,116 @@ def run_algorithm(algorithm):
 
 def run_j48(csv_path):
     try:
-        loader = Loader(classname="weka.core.converters.CSVLoader")  # Para archivos con punto y coma
-        data = loader.load_file(csv_path)
-        data.class_is_last()
+        # Cargar los datos usando pandas
+        data = pd.read_csv(csv_path)
 
-        classifier = Classifier(classname="weka.classifiers.trees.J48")
-        classifier.build_classifier(data)
+        # Separar características (X) y etiquetas (y)
+        X = data.iloc[:, :-1]  # Todas las columnas menos la última
+        y = data.iloc[:, -1]   # Última columna
 
+        # Identificar columnas categóricas en X
+        categorical_cols = X.select_dtypes(include=['object']).columns
+
+        # Aplicar One-Hot Encoding a las columnas categóricas
+        X = pd.get_dummies(X, columns=categorical_cols)
+
+        # Si y es categórica, también la codificamos
+        if y.dtype == 'object':
+            from sklearn.preprocessing import LabelEncoder
+            le = LabelEncoder()
+            y = le.fit_transform(y)
+            class_names = le.classes_
+        else:
+            class_names = [str(cls) for cls in set(y)]
+
+        # Dividir los datos en entrenamiento y prueba
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Crear y entrenar el modelo de árbol de decisión
+        clf = DecisionTreeClassifier()
+        clf.fit(X_train, y_train)
+
+        # Generar el gráfico del árbol
         dot_path = os.path.join(app.static_folder, "tree.dot")
-        with open(dot_path, "w") as dot_file:
-            dot_file.write(classifier.graph)
+        export_graphviz(clf, out_file=dot_path, feature_names=X.columns, class_names=class_names, filled=True)
 
         png_path = os.path.join(app.static_folder, "tree.png")
         command = ["dot", "-Tpng", dot_path, "-o", png_path]
         subprocess.run(command, check=True)
 
-        evaluation = Evaluation(data)
-        evaluation.crossvalidate_model(classifier, data, 10, Random(1))
-        report = {
-            "accuracy": evaluation.percent_correct / 100,
-            "kappa": evaluation.kappa,
-            "mean_absolute_error": evaluation.mean_absolute_error,
-            "root_mean_squared_error": evaluation.root_mean_squared_error,
-            "relative_absolute_error": evaluation.relative_absolute_error,
-            "root_relative_squared_error": evaluation.root_relative_squared_error,
-            "total_instances": evaluation.num_instances,
+        # Evaluar el modelo usando el conjunto de prueba
+        y_pred = clf.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+
+        # Calcular otras métricas
+        report = classification_report(y_test, y_pred, output_dict=True)
+        confusion = confusion_matrix(y_test, y_pred)
+
+        # Si tus etiquetas tienen significado numérico, puedes calcular MAE y MSE
+        mae = mean_absolute_error(y_test, y_pred)
+        mse = mean_squared_error(y_test, y_pred)
+
+        metrics = {
+            "accuracy": accuracy,
+            "mean_absolute_error": mae,
+            "mean_squared_error": mse,
+            "classification_report": report,  # Convertir a lista para JSON
+            "total_instances": len(y_test),
         }
+
         return jsonify({
             "status": "success",
-            "report": report,
+            "report": metrics,
             "tree_image_url": "/static/tree.png",
         })
 
     except subprocess.CalledProcessError as e:
         return jsonify({"status": "error", "message": f"Error al ejecutar dot: {e}"})
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
+        import traceback
+        traceback_str = ''.join(traceback.format_tb(e.__traceback__))
+        error_message = f"{str(e)}\nTraceback:\n{traceback_str}"
+        return jsonify({"status": "error", "message": error_message})
 
 def run_kmeans(csv_path, num_clusters):
     try:
-        loader = Loader(classname="weka.core.converters.CSVLoader")  # Para archivos con punto y coma
-        data = loader.load_file(csv_path)
-        data.class_index = -1
+        # Cargar los datos usando pandas
+        data = pd.read_csv(csv_path)
 
-        clusterer = Clusterer(classname="weka.clusterers.SimpleKMeans", options=["-N", str(num_clusters)])
-        clusterer.build_clusterer(data)
+        # Identificar columnas categóricas en X
+        categorical_cols = data.select_dtypes(include=['object']).columns
 
-        clusters = defaultdict(list)
-        for instance_idx, instance in enumerate(data):
-            cluster_idx = clusterer.cluster_instance(instance)
-            clusters[cluster_idx].append(instance)
+        # Opcional: Decidir si se eliminan o se codifican las columnas categóricas
+        # Aquí las eliminamos
+        X = data.drop(columns=categorical_cols)
 
-        cluster_centers = {}
-        for cluster_idx, instances in clusters.items():
-            cluster_centroid = {}
-            for attr_idx in range(data.num_attributes):
-                attr_name = data.attribute(attr_idx).name
-                attr_values = [instance.get_value(attr_idx) for instance in instances]
-                cluster_centroid[attr_name] = sum(attr_values) / len(attr_values) if attr_values else 0.0
-            cluster_centers[f"Cluster {cluster_idx + 1}"] = cluster_centroid
+        # Asegurarse de que no hay valores NaN
+        X = X.dropna()
 
-        data_points = np.array([[instance.get_value(i) for i in range(data.num_attributes)] for instance in data])
-        cluster_assignments = [clusterer.cluster_instance(instance) for instance in data]
+        # Crear y entrenar el modelo KMeans
+        kmeans = KMeans(n_clusters=num_clusters, random_state=0)
+        kmeans.fit(X)
 
+        # Obtener los centros de los clusters
+        cluster_centers = kmeans.cluster_centers_
+        cluster_labels = kmeans.labels_
+
+        centers = {}
+        for idx, center in enumerate(cluster_centers):
+            centers[f"Cluster {idx + 1}"] = dict(zip(X.columns, center))
+
+        # Visualizar los clusters
         plt.figure(figsize=(8, 6))
-        if data.num_attributes >= 2:
-            plt.scatter(data_points[:, 0], data_points[:, 1], c=cluster_assignments, cmap='viridis', s=50, label="Instancias")
-            for cluster_idx, centroid in cluster_centers.items():
-                plt.scatter(
-                    [centroid[data.attribute(0).name]], 
-                    [centroid[data.attribute(1).name]], 
-                    color='red', 
-                    s=100, 
-                    label=f"Centroide {cluster_idx}",
-                    edgecolors='black'
-                )
-            plt.xlabel(data.attribute(0).name)
-            plt.ylabel(data.attribute(1).name)
+        if X.shape[1] >= 2:
+            plt.scatter(X.iloc[:, 0], X.iloc[:, 1], c=cluster_labels, cmap='viridis', s=50, label="Instancias")
+            plt.scatter(cluster_centers[:, 0], cluster_centers[:, 1], color='red', s=100, label="Centroides", edgecolors='black')
+            plt.xlabel(X.columns[0])
+            plt.ylabel(X.columns[1])
         else:
-            plt.scatter(range(len(data_points)), data_points[:, 0], c=cluster_assignments, cmap='viridis', s=50)
+            plt.scatter(range(len(X)), X.iloc[:, 0], c=cluster_labels, cmap='viridis', s=50)
             plt.xlabel("Índice de Instancia")
-            plt.ylabel(data.attribute(0).name)
-        
+            plt.ylabel(X.columns[0])
+
         plt.title(f"KMeans Clustering (k={num_clusters})")
         plt.colorbar(label="Cluster")
         plt.legend()
@@ -154,7 +180,7 @@ def run_kmeans(csv_path, num_clusters):
 
         return jsonify({
             "status": "success",
-            "cluster_centers": cluster_centers,
+            "cluster_centers": centers,
             "cluster_image_url": "/static/clusters.png",
         })
 
@@ -163,62 +189,52 @@ def run_kmeans(csv_path, num_clusters):
 
 def run_mlp(csv_path):
     try:
-        loader = Loader(classname="weka.core.converters.CSVLoader")  # Para archivos con punto y coma
-        data = loader.load_file(csv_path)
-        data.class_is_last()
+        # Cargar los datos usando pandas
+        data = pd.read_csv(csv_path)
+        X = data.iloc[:, :-1]
+        y = data.iloc[:, -1]
 
-        mlp = Classifier(
-            classname="weka.classifiers.functions.MultilayerPerceptron",
-            options=["-L", "0.3", "-M", "0.2", "-N", "500", "-V", "0", "-S", "0", "-E", "20", "-H", "a"]
-        )
-        mlp.build_classifier(data)
+        # Identificar columnas categóricas en X
+        categorical_cols = X.select_dtypes(include=['object']).columns
 
-        evaluation = Evaluation(data)
-        evaluation.crossvalidate_model(mlp, data, 10, Random(1))
+        # Aplicar One-Hot Encoding a las columnas categóricas
+        X = pd.get_dummies(X, columns=categorical_cols)
+
+        # Si y es categórica, también la codificamos
+        if y.dtype == 'object':
+            from sklearn.preprocessing import LabelEncoder
+            le = LabelEncoder()
+            y = le.fit_transform(y)
+            class_names = le.classes_
+        else:
+            class_names = [str(cls) for cls in set(y)]
+
+        # Dividir los datos en entrenamiento y prueba
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Crear y entrenar el modelo MLP
+        mlp = MLPClassifier(hidden_layer_sizes=(10,), max_iter=500, random_state=1)
+        mlp.fit(X_train, y_train)
+
+        # Evaluar el modelo
+        y_pred = mlp.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        mae = mean_absolute_error(y_test, y_pred)
+        mse = mean_squared_error(y_test, y_pred)
+        report = classification_report(y_test, y_pred, output_dict=True)
+        confusion = confusion_matrix(y_test, y_pred)
 
         metrics = {
-            "accuracy": evaluation.percent_correct / 100,
-            "kappa": evaluation.kappa,
-            "mean_absolute_error": evaluation.mean_absolute_error,
-            "root_mean_squared_error": evaluation.root_mean_squared_error,
-            "relative_absolute_error": evaluation.relative_absolute_error,
-            "root_relative_squared_error": evaluation.root_relative_squared_error,
-            "total_instances": evaluation.num_instances,
+            "accuracy": accuracy,
+            "mean_absolute_error": mae,
+            "mean_squared_error": mse,
+            "classification_report": report,
+            "confusion_matrix": confusion.tolist(),
+            "total_instances": len(y_test),
         }
 
-        def plot_neural_network(input_size, hidden_size, output_size):
-            layers = [input_size, hidden_size, output_size]
-            G = nx.DiGraph()
-            pos = {}
-            y_offset = 0
-            for layer_idx, layer_size in enumerate(layers):
-                x_offset = 0
-                for neuron in range(layer_size):
-                    node_name = f"L{layer_idx}_N{neuron}"
-                    G.add_node(node_name, layer=layer_idx)
-                    pos[node_name] = (layer_idx, y_offset - neuron)
-                y_offset -= layer_size + 2
-
-            for layer_idx in range(len(layers) - 1):
-                for src in range(layers[layer_idx]):
-                    for dst in range(layers[layer_idx + 1]):
-                        G.add_edge(f"L{layer_idx}_N{src}", f"L{layer_idx + 1}_N{dst}")
-
-            plt.figure(figsize=(10, 8))
-            nx.draw(
-                G, pos, with_labels=False, node_size=1000, node_color="skyblue", edge_color="gray", arrows=True
-            )
-            plt.title("Neural Network Visualization")
-            plt.axis("off")
-
-        input_size = data.num_attributes - 1
-        hidden_size = 10
-        output_size = data.class_attribute.num_values
-        plot_neural_network(input_size, hidden_size, output_size)
-
-        mlp_image_path = os.path.join(app.static_folder, "mlp_network.png")
-        plt.savefig(mlp_image_path)
-        plt.close()
+        # Visualización de la red neuronal (opcional)
+        # ...
 
         return jsonify({
             "status": "success",
@@ -227,10 +243,10 @@ def run_mlp(csv_path):
         })
 
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
+        import traceback
+        traceback_str = ''.join(traceback.format_tb(e.__traceback__))
+        error_message = f"{str(e)}\nTraceback:\n{traceback_str}"
+        return jsonify({"status": "error", "message": error_message})
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-import atexit
-atexit.register(jvm.stop)

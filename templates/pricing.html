@@ -55,30 +55,32 @@
     <!-- END LOADER -->
 
     <!-- Start header -->
-<!-- Start header -->
-<header class="top-navbar">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('home') }}">
-                <img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}" alt="Vitalcheck Logo" style="max-height: 50px;" />
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars-seo"
-                aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbars-seo">
-                <ul class="navbar-nav ml-auto">
-                    <!-- Enlace actualizado para Home -->
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
-                    <!-- Enlace actualizado para Algoritmos -->
-                    <li class="nav-item active"><a class="nav-link" href="{{ url_for('index') }}">Algoritmos</a></li>
-                    <!-- Enlace original para Registrate -->
-                    <li class="nav-item"><a class="nav-link" href="contact.html">Registrate</a></li>
-                </ul>
+    <!-- Start header -->
+    <header class="top-navbar">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}" alt="Vitalcheck Logo"
+                        style="max-height: 50px;" />
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars-seo"
+                    aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbars-seo">
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Enlace actualizado para Home -->
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
+                        <!-- Enlace actualizado para Algoritmos -->
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('index') }}">Algoritmos</a>
+                        </li>
+                        <!-- Enlace original para Registrate -->
+                        <li class="nav-item"><a class="nav-link" href="contact.html">Registrate</a></li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
-</header>
+        </nav>
+    </header>
 
 
     <div class="all-page-title"
@@ -184,7 +186,7 @@
     <div class="btn-submit-container" style="text-align: center; padding-top: 30px; padding-bottom: 20px;">
         <button type="submit" class="bttn-new-a" onclick="submitForm()">Generar resultados</button>
     </div>
-    
+
 
     <div id="result" style="margin-top: 20px; display: none;">
         <!-- Aquí se mostrarán los resultados -->
@@ -205,7 +207,8 @@
                 <div class="col-lg-4 col-md-6 col-xs-12">
                     <div class="widget clearfix">
                         <div class="widget-title">
-                            <img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}" alt="Vitalcheck Logo" style="max-height: 50px;" />
+                            <img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}"
+                                alt="Vitalcheck Logo" style="max-height: 50px;" />
                         </div>
                         <p> Sistema de información orientado al manejo de datos para la identificación temprana y
                             seguimiento de condiciones prediabéticas y diabéticas</p>
@@ -341,38 +344,105 @@
                 .then((data) => {
                     let contentHTML = ""; // Resetear contenido
 
+                    // Manejar errores devueltos por el servidor
+                    if (data.status === "error") {
+                        contentHTML = `
+                        <div style="text-align: center; margin-top: 20px; color: red;">
+                            Error: ${data.message}
+                        </div>`;
+                        document.getElementById("result").innerHTML = contentHTML;
+                        document.getElementById("result").style.display = "block";
+                        return;
+                    }
+
                     // Crear tabla para J48 y MLP
                     if (selectedAlgorithm !== "kmeans" && data.report) {
                         contentHTML += `
-                    <div style="text-align: center; margin-top: 20px;">
-                        <h3>Resultados:</h3>
-                        <table border="1" style="width: 50%; margin: 0 auto; text-align: left; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background-color: #f2f2f2;">
-                                    <th style="padding: 10px;">Métrica</th>
-                                    <th style="padding: 10px;">Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-                        for (let key in data.report) {
+                        <div style="text-align: center; margin-top: 20px;">
+                            <h3>Resultados:</h3>
+                            <table border="1" style="width: 70%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background-color: #f2f2f2;">
+                                        <th style="padding: 10px;">Métrica</th>
+                                        <th style="padding: 10px;">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+
+                        // Agregar métricas principales
+                        const metrics = ["accuracy", "mean_absolute_error", "mean_squared_error", "total_instances"];
+                        metrics.forEach((metric) => {
+                            if (data.report[metric] !== undefined) {
+                                contentHTML += `
+                                <tr>
+                                    <td style="padding: 10px;">${metric}</td>
+                                    <td style="padding: 10px;">${data.report[metric]}</td>
+                                </tr>`;
+                            }
+                        });
+
+                        if (data.report.classification_report) {
                             contentHTML += `
-                        <tr>
-                            <td style="padding: 10px;">${key}</td>
-                            <td style="padding: 10px;">${data.report[key]}</td>
-                        </tr>`;
+    <tr style="background-color: #f2f2f2;">
+        <td style="padding: 10px;" colspan="2"><strong>Reporte de Clasificación</strong></td>
+    </tr>`;
+
+                            const classReport = data.report.classification_report;
+                            for (let label in classReport) {
+                                // Saltar claves que no corresponden a clases individuales
+                                if (!classReport[label].precision || !classReport[label].recall || !classReport[label]["f1-score"]) {
+                                    continue;
+                                }
+                                contentHTML += `
+        <tr>
+            <td style="padding: 10px;">Clase ${label}</td>
+            <td style="padding: 10px;">
+                Precisión: ${parseFloat(classReport[label].precision).toFixed(2)}, 
+                Recall: ${parseFloat(classReport[label].recall).toFixed(2)}, 
+                F1-Score: ${parseFloat(classReport[label]["f1-score"]).toFixed(2)}
+            </td>
+        </tr>`;
+                            }
+
+                            // Agregar promedios si existen
+                            ['macro avg', 'weighted avg'].forEach((avg) => {
+                                if (classReport[avg] && classReport[avg].precision && classReport[avg].recall && classReport[avg]["f1-score"]) {
+                                    contentHTML += `
+            <tr>
+                <td style="padding: 10px;">${avg}</td>
+                <td style="padding: 10px;">
+                    Precisión: ${parseFloat(classReport[avg].precision).toFixed(2)}, 
+                    Recall: ${parseFloat(classReport[avg].recall).toFixed(2)}, 
+                    F1-Score: ${parseFloat(classReport[avg]["f1-score"]).toFixed(2)}
+                </td>
+            </tr>`;
+                                }
+                            });
+
+                            // Agregar precisión general si existe
+                            if (classReport.accuracy) {
+                                contentHTML += `
+        <tr>
+            <td style="padding: 10px;">Accuracy</td>
+            <td style="padding: 10px;">
+                ${parseFloat(classReport.accuracy).toFixed(2)}
+            </td>
+        </tr>`;
+                            }
                         }
+
                         contentHTML += `</tbody></table></div>`;
                     }
 
                     // Crear tabla específica para KMeans
                     if (selectedAlgorithm === "kmeans" && data.cluster_centers) {
                         contentHTML += `
-                    <div style="text-align: center; margin-top: 20px;">
-                        <h3>Centroides de los Clusters:</h3>
-                        <table border="1" style="width: 70%; margin: 0 auto; text-align: left; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background-color: #f2f2f2;">
-                                    <th style="padding: 10px;">Atributo</th>`;
+                        <div style="text-align: center; margin-top: 20px;">
+                            <h3>Centroides de los Clusters:</h3>
+                            <table border="1" style="width: 70%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background-color: #f2f2f2;">
+                                        <th style="padding: 10px;">Atributo</th>`;
                         for (let cluster in data.cluster_centers) {
                             contentHTML += `<th style="padding: 10px;">${cluster}</th>`;
                         }
@@ -381,7 +451,7 @@
                         for (let attribute of attributes) {
                             contentHTML += `<tr><td style="padding: 10px;">${attribute}</td>`;
                             for (let cluster in data.cluster_centers) {
-                                contentHTML += `<td style="padding: 10px;">${data.cluster_centers[cluster][attribute].toFixed(2)}</td>`;
+                                contentHTML += `<td style="padding: 10px;">${parseFloat(data.cluster_centers[cluster][attribute]).toFixed(2)}</td>`;
                             }
                             contentHTML += `</tr>`;
                         }
@@ -391,10 +461,10 @@
                     // Crear imagen si está disponible
                     if (data.tree_image_url || data.cluster_image_url || data.mlp_image_url) {
                         contentHTML += `
-                    <div style="text-align: center; margin-top: 20px;">
-                        <img src="${data.tree_image_url || data.cluster_image_url || data.mlp_image_url}" 
-                        alt="Visualización" style="max-width: 70%; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
-                    </div>`;
+                        <div style="text-align: center; margin-top: 20px;">
+                            <img src="${data.tree_image_url || data.cluster_image_url || data.mlp_image_url}" 
+                            alt="Visualización" style="max-width: 70%; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
+                        </div>`;
                     }
 
                     // Mostrar resultados
@@ -403,13 +473,14 @@
                 })
                 .catch((error) => {
                     document.getElementById("result").innerHTML = `
-                <div style="text-align: center; margin-top: 20px; color: red;">
-                    Error en la conexión: ${error}
-                </div>`;
+                    <div style="text-align: center; margin-top: 20px; color: red;">
+                        Error en la conexión: ${error}
+                    </div>`;
                     document.getElementById("result").style.display = "block";
                 });
         }
     </script>
+
 
 </body>
 

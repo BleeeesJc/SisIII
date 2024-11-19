@@ -1,45 +1,49 @@
-digraph J48Tree {
-N0 [label="Glucose Tolerance Test" ]
-N0->N1 [label="= Normal"]
-N1 [label="Alcohol Consumption" ]
-N1->N2 [label="= Low"]
-N2 [label="Genetic Testing" ]
-N2->N3 [label="= Negative"]
-N3 [label="No (6.0)" shape=box style=filled ]
-N2->N4 [label="= Positive"]
-N4 [label="Digestive Enzyme Levels" ]
-N4->N5 [label="<= 27"]
-N5 [label="Yes (3.0)" shape=box style=filled ]
-N4->N6 [label="> 27"]
-N6 [label="Steroid Use History" ]
-N6->N7 [label="= No"]
-N7 [label="No (5.0)" shape=box style=filled ]
-N6->N8 [label="= Yes"]
-N8 [label="Family History" ]
-N8->N9 [label="= No"]
-N9 [label="No (3.0)" shape=box style=filled ]
-N8->N10 [label="= Yes"]
-N10 [label="Yes (4.0/1.0)" shape=box style=filled ]
-N1->N11 [label="= Moderate"]
-N11 [label="Pregnancy History" ]
-N11->N12 [label="= Complications"]
-N12 [label="Cholesterol Levels" ]
-N12->N13 [label="<= 157"]
-N13 [label="No (3.0)" shape=box style=filled ]
-N12->N14 [label="> 157"]
-N14 [label="Yes (8.0/1.0)" shape=box style=filled ]
-N11->N15 [label="= Normal"]
-N15 [label="No (4.0)" shape=box style=filled ]
-N1->N16 [label="= High"]
-N16 [label="Waist Circumference" ]
-N16->N17 [label="<= 39"]
-N17 [label="No (13.0)" shape=box style=filled ]
-N16->N18 [label="> 39"]
-N18 [label="Yes (3.0/1.0)" shape=box style=filled ]
-N0->N19 [label="= Abnormal"]
-N19 [label="Pancreatic Health" ]
-N19->N20 [label="<= 25"]
-N20 [label="No (7.0)" shape=box style=filled ]
-N19->N21 [label="> 25"]
-N21 [label="Yes (41.0/12.0)" shape=box style=filled ]
+digraph Tree {
+node [shape=box, style="filled", color="black", fontname="helvetica"] ;
+edge [fontname="helvetica"] ;
+0 [label="HbA1c_level <= 6.7\ngini = 0.16\nsamples = 240\nvalue = [219, 21]\nclass = 0", fillcolor="#e78d4c"] ;
+1 [label="blood_glucose_level <= 210.0\ngini = 0.068\nsamples = 227\nvalue = [219, 8]\nclass = 0", fillcolor="#e68640"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label="bmi <= 36.275\ngini = 0.044\nsamples = 224\nvalue = [219, 5]\nclass = 0", fillcolor="#e6843e"] ;
+1 -> 2 ;
+3 [label="age <= 67.5\ngini = 0.019\nsamples = 207\nvalue = [205, 2]\nclass = 0", fillcolor="#e5823b"] ;
+2 -> 3 ;
+4 [label="gini = 0.0\nsamples = 181\nvalue = [181, 0]\nclass = 0", fillcolor="#e58139"] ;
+3 -> 4 ;
+5 [label="smoking_history_former <= 0.5\ngini = 0.142\nsamples = 26\nvalue = [24, 2]\nclass = 0", fillcolor="#e78c49"] ;
+3 -> 5 ;
+6 [label="HbA1c_level <= 6.35\ngini = 0.083\nsamples = 23\nvalue = [22, 1]\nclass = 0", fillcolor="#e68742"] ;
+5 -> 6 ;
+7 [label="gini = 0.0\nsamples = 16\nvalue = [16, 0]\nclass = 0", fillcolor="#e58139"] ;
+6 -> 7 ;
+8 [label="gender_Female <= 0.5\ngini = 0.245\nsamples = 7\nvalue = [6, 1]\nclass = 0", fillcolor="#e9965a"] ;
+6 -> 8 ;
+9 [label="HbA1c_level <= 6.55\ngini = 0.444\nsamples = 3\nvalue = [2, 1]\nclass = 0", fillcolor="#f2c09c"] ;
+8 -> 9 ;
+10 [label="gini = 0.0\nsamples = 1\nvalue = [0, 1]\nclass = 1", fillcolor="#399de5"] ;
+9 -> 10 ;
+11 [label="gini = 0.0\nsamples = 2\nvalue = [2, 0]\nclass = 0", fillcolor="#e58139"] ;
+9 -> 11 ;
+12 [label="gini = 0.0\nsamples = 4\nvalue = [4, 0]\nclass = 0", fillcolor="#e58139"] ;
+8 -> 12 ;
+13 [label="bmi <= 26.48\ngini = 0.444\nsamples = 3\nvalue = [2, 1]\nclass = 0", fillcolor="#f2c09c"] ;
+5 -> 13 ;
+14 [label="gini = 0.0\nsamples = 2\nvalue = [2, 0]\nclass = 0", fillcolor="#e58139"] ;
+13 -> 14 ;
+15 [label="gini = 0.0\nsamples = 1\nvalue = [0, 1]\nclass = 1", fillcolor="#399de5"] ;
+13 -> 15 ;
+16 [label="blood_glucose_level <= 180.0\ngini = 0.291\nsamples = 17\nvalue = [14, 3]\nclass = 0", fillcolor="#eb9c63"] ;
+2 -> 16 ;
+17 [label="age <= 70.5\ngini = 0.124\nsamples = 15\nvalue = [14, 1]\nclass = 0", fillcolor="#e78a47"] ;
+16 -> 17 ;
+18 [label="gini = 0.0\nsamples = 14\nvalue = [14, 0]\nclass = 0", fillcolor="#e58139"] ;
+17 -> 18 ;
+19 [label="gini = 0.0\nsamples = 1\nvalue = [0, 1]\nclass = 1", fillcolor="#399de5"] ;
+17 -> 19 ;
+20 [label="gini = 0.0\nsamples = 2\nvalue = [0, 2]\nclass = 1", fillcolor="#399de5"] ;
+16 -> 20 ;
+21 [label="gini = 0.0\nsamples = 3\nvalue = [0, 3]\nclass = 1", fillcolor="#399de5"] ;
+1 -> 21 ;
+22 [label="gini = 0.0\nsamples = 13\nvalue = [0, 13]\nclass = 1", fillcolor="#399de5"] ;
+0 -> 22 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
 }
