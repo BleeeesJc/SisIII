@@ -74,7 +74,7 @@ def run_j48(csv_path):
 
         # Si y es categórica, también la codificamos
         if y.dtype == 'object':
-            from sklearn.preprocessing import LabelEncoder
+            from sklearn.preprocessing import LabelEncoder # type: ignore
             le = LabelEncoder()
             y = le.fit_transform(y)
             class_names = le.classes_
@@ -202,7 +202,7 @@ def run_mlp(csv_path):
 
         # Si y es categórica, también la codificamos
         if y.dtype == 'object':
-            from sklearn.preprocessing import LabelEncoder
+            from sklearn.preprocessing import LabelEncoder # type: ignore
             le = LabelEncoder()
             y = le.fit_transform(y)
             class_names = le.classes_
