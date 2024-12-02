@@ -205,14 +205,17 @@
                 <div class="col-lg-4 col-md-6 col-xs-12">
                     <div class="widget clearfix">
                         <div class="widget-title">
-							<img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}" alt="Vitalcheck Logo" style="max-height: 50px;" />
+                            <img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}"
+                                alt="Vitalcheck Logo" style="max-height: 50px;" />
                         </div>
-                        <p> Sistema de información orientado al manejo de datos para la identificación temprana y seguimiento de condiciones prediabéticas y diabéticas</p>
-                        <p>Si tienes alguna duda o problema no dudes en contactarnos, nuestros correos electrónicos se encuentran a continuación</p>
+                        <p> Sistema de información orientado al manejo de datos para la identificación temprana y
+                            seguimiento de condiciones prediabéticas y diabéticas</p>
+                        <p>Si tienes alguna duda o problema no dudes en contactarnos, nuestros correos electrónicos se
+                            encuentran a continuación</p>
                     </div><!-- end clearfix -->
                 </div><!-- end col -->
-				
-				<div class="col-lg-2 col-md-6 col-xs-12">
+
+                <div class="col-lg-2 col-md-6 col-xs-12">
                     <div class="widget clearfix">
                         <div class="widget-title">
                             <h3>Información</h3>
@@ -231,16 +234,21 @@
                             <h3>Redes Sociales</h3>
                         </div>
                         <ul class="footer-links social-md">
-                            <li><a class="fb btn-a" title="Facebook" data-tippy-animation="scale" href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a class="gi btn-a" title="Github" data-tippy-animation="scale" href="#"><i class="fa fa-github"></i> </a></li>
-                            <li><a class="tw btn-a" title="Twitter" data-tippy-animation="scale" href="#"><i class="fa fa-twitter"></i> </a></li>
-                            <li><a class="dr btn-a" title="Dribbble" data-tippy-animation="scale" href="#"><i class="fa fa-dribbble"></i> </a></li>
-                            <li><a class="pi btn-a" title="Pinterest" data-tippy-animation="scale" href="#"><i class="fa fa-pinterest"></i> </a></li>
+                            <li><a class="fb btn-a" title="Facebook" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-facebook"></i></a></li>
+                            <li><a class="gi btn-a" title="Github" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-github"></i> </a></li>
+                            <li><a class="tw btn-a" title="Twitter" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-twitter"></i> </a></li>
+                            <li><a class="dr btn-a" title="Dribbble" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-dribbble"></i> </a></li>
+                            <li><a class="pi btn-a" title="Pinterest" data-tippy-animation="scale" href="#"><i
+                                        class="fa fa-pinterest"></i> </a></li>
                         </ul><!-- end links -->
                     </div><!-- end clearfix -->
                 </div><!-- end col -->
-				
-				<div class="col-lg-3 col-md-6 col-xs-12">
+
+                <div class="col-lg-3 col-md-6 col-xs-12">
                     <div class="widget clearfix">
                         <div class="widget-title">
                             <h3>Detalles de Contacto</h3>
@@ -254,7 +262,7 @@
                         </ul><!-- end links -->
                     </div><!-- end clearfix -->
                 </div><!-- end col -->
-				
+
             </div><!-- end row -->
         </div><!-- end container -->
     </footer><!-- end footer -->
@@ -324,84 +332,78 @@
                         return;
                     }
 
-                    // Crear tabla para J48 y MLP
-                    if (selectedAlgorithm !== "kmeans" && data.report) {
-                        contentHTML += `
-                        <div style="text-align: center; margin-top: 20px;">
-                            <h3>Resultados:</h3>
-                            <table border="1" style="width: 70%; margin: 0 auto; text-align: left; border-collapse: collapse;">
-                                <thead>
-                                    <tr style="background-color: #f2f2f2;">
-                                        <th style="padding: 10px;">Métrica</th>
-                                        <th style="padding: 10px;">Valor</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`;
+                    if (selectedAlgorithm === "mlp" && data.classification_report) {
+    // Tabla de precisión total y última iteración
+    contentHTML += `
+    <div style="text-align: center; margin-top: 20px;">
+        <h3>Resultados Generales:</h3>
+        <table border="1" style="width: 50%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 10px;">Métrica</th>
+                    <th style="padding: 10px;">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 10px;">Precisión Total</td>
+                    <td style="padding: 10px;">${data.accuracy}%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px;">Última Iteración</td>
+                    <td style="padding: 10px;">${data.last_iteration}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>`;
 
-                        // Agregar métricas principales
-                        const metrics = ["accuracy", "mean_absolute_error", "mean_squared_error", "total_instances"];
-                        metrics.forEach((metric) => {
-                            if (data.report[metric] !== undefined) {
-                                contentHTML += `
-                                <tr>
-                                    <td style="padding: 10px;">${metric}</td>
-                                    <td style="padding: 10px;">${data.report[metric]}</td>
-                                </tr>`;
-                            }
-                        });
+    // Tabla de métricas de clasificación
+    contentHTML += `
+    <div style="text-align: center; margin-top: 20px;">
+        <h3>Reporte de Clasificación:</h3>
+        <table border="1" style="width: 80%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 10px;">Clase</th>
+                    <th style="padding: 10px;">Precisión</th>
+                    <th style="padding: 10px;">Recall</th>
+                    <th style="padding: 10px;">F1-Score</th>
+                    <th style="padding: 10px;">Soporte</th>
+                </tr>
+            </thead>
+            <tbody>`;
 
-                        if (data.report.classification_report) {
-                            contentHTML += `
-    <tr style="background-color: #f2f2f2;">
-        <td style="padding: 10px;" colspan="2"><strong>Reporte de Clasificación</strong></td>
-    </tr>`;
-
-                            const classReport = data.report.classification_report;
-                            for (let label in classReport) {
-                                // Saltar claves que no corresponden a clases individuales
-                                if (!classReport[label].precision || !classReport[label].recall || !classReport[label]["f1-score"]) {
-                                    continue;
-                                }
-                                contentHTML += `
-        <tr>
-            <td style="padding: 10px;">Clase ${label}</td>
-            <td style="padding: 10px;">
-                Precisión: ${parseFloat(classReport[label].precision).toFixed(2)}, 
-                Recall: ${parseFloat(classReport[label].recall).toFixed(2)}, 
-                F1-Score: ${parseFloat(classReport[label]["f1-score"]).toFixed(2)}
-            </td>
-        </tr>`;
-                            }
-
-                            // Agregar promedios si existen
-                            ['macro avg', 'weighted avg'].forEach((avg) => {
-                                if (classReport[avg] && classReport[avg].precision && classReport[avg].recall && classReport[avg]["f1-score"]) {
-                                    contentHTML += `
+    for (const [key, metrics] of Object.entries(data.classification_report)) {
+        if (typeof metrics === "object" && metrics.support !== undefined) {
+            contentHTML += `
             <tr>
-                <td style="padding: 10px;">${avg}</td>
-                <td style="padding: 10px;">
-                    Precisión: ${parseFloat(classReport[avg].precision).toFixed(2)}, 
-                    Recall: ${parseFloat(classReport[avg].recall).toFixed(2)}, 
-                    F1-Score: ${parseFloat(classReport[avg]["f1-score"]).toFixed(2)}
-                </td>
+                <td style="padding: 10px;">${key}</td>
+                <td style="padding: 10px;">${parseFloat(metrics.precision).toFixed(2)}</td>
+                <td style="padding: 10px;">${parseFloat(metrics.recall).toFixed(2)}</td>
+                <td style="padding: 10px;">${parseFloat(metrics["f1-score"]).toFixed(2)}</td>
+                <td style="padding: 10px;">${metrics.support}</td>
             </tr>`;
-                                }
-                            });
+        }
+    }
 
-                            // Agregar precisión general si existe
-                            if (classReport.accuracy) {
-                                contentHTML += `
-        <tr>
-            <td style="padding: 10px;">Accuracy</td>
-            <td style="padding: 10px;">
-                ${parseFloat(classReport.accuracy).toFixed(2)}
-            </td>
-        </tr>`;
-                            }
-                        }
+    // Agregar macro avg y weighted avg
+    ["macro avg", "weighted avg"].forEach((avgType) => {
+        if (data.classification_report[avgType]) {
+            const metrics = data.classification_report[avgType];
+            contentHTML += `
+            <tr style="font-weight: bold; background-color: #f9f9f9;">
+                <td style="padding: 10px;">${avgType}</td>
+                <td style="padding: 10px;">${parseFloat(metrics.precision).toFixed(2)}</td>
+                <td style="padding: 10px;">${parseFloat(metrics.recall).toFixed(2)}</td>
+                <td style="padding: 10px;">${parseFloat(metrics["f1-score"]).toFixed(2)}</td>
+                <td style="padding: 10px;">${metrics.support}</td>
+            </tr>`;
+        }
+    });
 
-                        contentHTML += `</tbody></table></div>`;
-                    }
+    contentHTML += `</tbody></table></div>`;
+}
+
 
                     // Crear tabla específica para KMeans
                     if (selectedAlgorithm === "kmeans" && data.cluster_centers) {
@@ -428,12 +430,12 @@
                     }
 
                     // Crear imagen si está disponible
-                    if (data.tree_image_url || data.cluster_image_url || data.mlp_image_url) {
+                    if (data.loss_curve_url || data.cluster_image_url) {
                         contentHTML += `
-                        <div style="text-align: center; margin-top: 20px;">
-                            <img src="${data.tree_image_url || data.cluster_image_url || data.mlp_image_url}" 
-                            alt="Visualización" style="max-width: 70%; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
-                        </div>`;
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="${data.loss_curve_url || data.cluster_image_url}" 
+                    alt="Visualización" style="max-width: 70%; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
+                </div>`;
                     }
 
                     // Mostrar resultados

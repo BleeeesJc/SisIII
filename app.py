@@ -1,14 +1,11 @@
 from flask import Flask, jsonify, request, render_template
 import os
 import matplotlib.pyplot as plt
-import numpy as np
-from collections import defaultdict
-import networkx as nx
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from werkzeug.utils import secure_filename
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.cluster import KMeans
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import cross_val_score
 from sklearn.metrics import classification_report, accuracy_score, mean_absolute_error, mean_squared_error, confusion_matrix
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -44,9 +41,7 @@ def run_algorithm(algorithm):
         file.save(filepath)
 
         # Llamar al algoritmo seleccionado
-        if algorithm == "j48":
-            return run_j48(filepath)
-        elif algorithm == "kmeans":
+        if algorithm == "kmeans":
             num_clusters = int(request.form.get("num_clusters", 2))  # Opcional para KMeans
             return run_kmeans(filepath, num_clusters)
         elif algorithm == "mlp":
@@ -192,55 +187,69 @@ def run_mlp(csv_path):
     try:
         # Cargar los datos usando pandas
         data = pd.read_csv(csv_path)
-        X = data.iloc[:, :-1]
-        y = data.iloc[:, -1]
 
-        # Identificar columnas categóricas en X
-        categorical_cols = X.select_dtypes(include=['object']).columns
+        # Identificar columnas categóricas y aplicar Label Encoding
+        label_encoders = {}
+        categorical_columns = data.select_dtypes(include=['object']).columns
 
-        # Aplicar One-Hot Encoding a las columnas categóricas
-        X = pd.get_dummies(X, columns=categorical_cols)
-
-        # Si y es categórica, también la codificamos
-        if y.dtype == 'object':
-            from sklearn.preprocessing import LabelEncoder # type: ignore
+        for col in categorical_columns:
             le = LabelEncoder()
-            y = le.fit_transform(y)
-            class_names = le.classes_
-        else:
-            class_names = [str(cls) for cls in set(y)]
+            data[col] = le.fit_transform(data[col])
+            label_encoders[col] = le
 
-        # Dividir los datos en entrenamiento y prueba
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        # Separar características (X) y etiquetas (y)
+        X = data.drop('Target', axis=1)
+        y = data['Target']
+
+        # Escalar características numéricas
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+
+        # Dividir los datos en conjuntos de entrenamiento y prueba
+        X_train, X_test, y_train, y_test = train_test_split(
+            X_scaled, y, test_size=0.2, random_state=42, stratify=y)
 
         # Crear y entrenar el modelo MLP
-        mlp = MLPClassifier(hidden_layer_sizes=(10,), max_iter=500, random_state=1)
+        mlp = MLPClassifier(
+            hidden_layer_sizes=(100, 50),
+            activation='relu',
+            solver='adam',
+            max_iter=300,
+            random_state=42,
+            verbose=True
+        )
         mlp.fit(X_train, y_train)
 
         # Evaluar el modelo
         y_pred = mlp.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
-        mae = mean_absolute_error(y_test, y_pred)
-        mse = mean_squared_error(y_test, y_pred)
-        report = classification_report(y_test, y_pred, output_dict=True)
-        confusion = confusion_matrix(y_test, y_pred)
 
-        metrics = {
-            "accuracy": accuracy,
-            "mean_absolute_error": mae,
-            "mean_squared_error": mse,
-            "classification_report": report,
-            "confusion_matrix": confusion.tolist(),
-            "total_instances": len(y_test),
-        }
+        # Obtener la última iteración realizada
+        last_iteration = len(mlp.loss_curve_)
 
-        # Visualización de la red neuronal (opcional)
-        # ...
+        # Convertir classification_report en un formato estructurado
+        report_dict = classification_report(y_test, y_pred, output_dict=True)
 
+        # Generar gráfica de curva de pérdida
+        plt.figure(figsize=(10, 6))
+        plt.plot(mlp.loss_curve_)
+        plt.title('Curva de pérdida durante el entrenamiento')
+        plt.xlabel('Iteraciones')
+        plt.ylabel('Pérdida')
+        plt.grid(True)
+
+        # Guardar la gráfica
+        loss_curve_image_path = os.path.join('static', 'mlp_loss_curve.png')
+        plt.savefig(loss_curve_image_path)
+        plt.close()
+
+        # Resultados
         return jsonify({
             "status": "success",
-            "report": metrics,
-            "mlp_image_url": "/static/mlp_network.png",
+            "accuracy": f"{accuracy:.2f}",
+            "last_iteration": last_iteration,
+            "classification_report": report_dict,
+            "loss_curve_url": f"/static/mlp_loss_curve.png"
         })
 
     except Exception as e:
