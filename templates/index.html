@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
  
      <!-- Site Metas -->
-    <title>Vitalcheck - Home</title>  
+    <title>Infrasense - Home</title>  
     <meta name="keywords" content="">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -82,7 +82,7 @@
                     <!-- Enlace actualizado para Home -->
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
                     <!-- Enlace actualizado para Algoritmos -->
-                    <li class="nav-item active"><a class="nav-link" href="{{ url_for('index') }}">Algoritmos</a></li>
+                    <li class="nav-item active"><a class="nav-link" href="{{ url_for('index') }}">Registrarse</a></li>
                 </ul>
             </div>
         </div>
@@ -90,27 +90,29 @@
 </header>
 	<!-- End header -->
     
-	<div id="slider" class="sl-slider-wrapper" style="position: relative;">
+	<div id="slider" class="sl-slider-wrapper" style="position: relative; width: 100%; height: 100vh; overflow: hidden;">
 		<!-- Imagen de fondo -->
-		<img src="{{ url_for('static', filename='images/slider-01.jpg') }}" alt="Detección de diabetes" style="width: 100%; height: auto;">
-	
+		<img src="{{ url_for('static', filename='images/slider-01.jpg') }}" alt="Monitoreo de Puentes" style="width: 100%; height: 100%; object-fit: cover;">
+		
 		<!-- Capa oscura -->
 		<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);"></div>
-	
+		
 		<!-- Contenido del slider -->
-		<div class="slider-content" style="position: absolute; top: 50%; left: 5%; transform: translateY(-50%); text-align: left; color: white;">
+		<div class="slider-content" style="position: absolute; top: 50%; left: 10%; transform: translateY(-50%); text-align: left; color: white;">
 			<!-- Título principal -->
-			<h2 style="font-size: 60px; color: white; margin-bottom: 20px;">Detección de diabetes</h2>
+			<h2 style="font-size: 60px; color: white; margin-bottom: 20px;">Monitoreo de Puentes</h2>
 			<!-- Texto descriptivo -->
-			<p style="font-size: 24px; color: #d3d3d3; margin-bottom: 30px;">Nuestro sistema está diseñado para facilitar la detección temprana y el seguimiento de la diabetes.</p>
+			<p style="font-size: 24px; color: #d3d3d3; margin-bottom: 30px;">Nuestro sistema está diseñado para facilitar el monitoreo de puentes y la detección temprana de fallos en la estructura</p>
 			<!-- Botón -->
-			<div>
-				<a href="{{ url_for('index') }}" class="bttn-new" style="background: #0594a9; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px;">Comenzar</a>
+			<div style="margin-top: 20px;">
+				<a href="{{ url_for('index') }}" style="text-decoration: none;">
+					<button class="bttn-new-a">Comenzar</button>
+				</a>
 			</div>
 		</div>
 	</div>
 	
-
+	
 
 
     <div id="about" class="section wb nopadtop">
@@ -118,13 +120,12 @@
             <div class="row">
 				<div class="col-md-6 m40">
                     <div class="message-box">
-                        <h4>SEO Company</h4>
+                        <h4></h4>
                         <h2>Problema Identificado</h2>
-                        <p>¿Cuál es el problema con la detección de la diabetes en la actualidad?</p>
+                        <p>¿Cuál es el problema con el mantenimiento actual de los puentes?</p>
 						
-						<p>Actualmente, tanto los médicos como los pacientes enfrentan múltiples desafíos en la identificación y seguimiento de condiciones prediabéticas y diabéticas. 
-							El personal de salud carece de herramientas tecnológicas accesibles y capacitaciones adecuadas para analizar grandes volúmenes de datos médicos, lo que dificulta el diagnóstico temprano y la toma de decisiones informadas.
-							<br>Esta falta de integración entre datos clínicos y herramientas intuitivas subraya la necesidad de un sistema eficiente que facilite el análisis, diagnóstico y seguimiento personalizado de la diabetes. </p>
+						<p>Hoy en día, mantener infraestructuras como puentes en buen estado es todo un reto. Las inspecciones manuales son lentas, caras y a menudo no detectan problemas a tiempo, lo que puede llevar a reparaciones costosas o, en el peor de los casos, a accidentes graves.
+							<br>Hace falta una solución más moderna y práctica que permita monitorear estas estructuras de forma continua, identificar problemas antes de que sean graves y aprovechar mejor los recursos disponibles. </p>
                         
                     </div><!-- end messagebox -->
                 </div><!-- end col -->
@@ -137,55 +138,61 @@
                 
             </div><!-- end row -->
 
-			<div class="row vission-and-mission">
-				<div class="col-md-12">
-					<ul class="nav nav-pills nav-justified" id="myTab" role="tablist">
-						<li class="nav-item"><a class="nav-link active" href="#tab_a" data-toggle="tab">¿Qué es la diabetes?</a></li>
-						<li class="nav-item"><a class="nav-link" href="#tab_b" data-toggle="tab">¿Por qué su detección y monitoreo es importante?</a></li>				
-					</ul>
-					<div class="tab-content">
-						<div class="tab-pane fade show active" id="tab_a">
-							<div class="box-inner-m">
-								<p>La diabetes es una enfermedad crónica que se produce cuando el cuerpo no puede regular eficazmente los niveles de glucosa en la sangre. Esto puede ocurrir debido a una producción insuficiente de insulina por el páncreas (como en la diabetes tipo 1) o porque el cuerpo no utiliza adecuadamente la insulina disponible (como en la diabetes tipo 2).</p>
-								<p>Existen otros tipos de diabetes, como la diabetes gestacional y la diabetes inducida por esteroides, que también requieren atención médica especializada. Esta condición afecta a millones de personas en todo el mundo y, si no se controla, puede provocar complicaciones graves, como enfermedades cardiovasculares, daño renal, pérdida de visión y amputaciones. </p>
-							</div>
-						</div>
-						<div class="tab-pane fade" id="tab_b">
-							<div class="box-inner-m">
-								<p>La detección temprana de la diabetes es crucial para prevenir complicaciones y mejorar la calidad de vida de los pacientes. Un diagnóstico a tiempo permite implementar cambios en el estilo de vida, iniciar tratamientos adecuados y monitorear factores clave como la glucosa y el índice de masa corporal (IMC). Además, identificar a pacientes en etapas prediabéticas puede retrasar o incluso prevenir la progresión a diabetes tipo 2, lo que representa un impacto significativo en su salud y reduce los costos asociados al tratamiento de las complicaciones.  </p>
-							    <p>Detectarla a tiempo no solo mejora los resultados clínicos, sino que también empodera a los pacientes para manejar su condición de manera más efectiva.</p>
-							</div>
-						</div>
-					</div>
-				</div>				
-			</div>
+
 			
 			<hr class="hr1">
 			
-			<div class="section-title text-center">               
-                <h3>Entonces...</h3>
-                <p class="lead">¿Cómo integrar y analizar datos para identificar y seguir condiciones prediabéticas y diabéticas utilizando tecnologías modernas del siglo XXI?
-				</p>
-            </div><!-- end title -->
+			<div class="section-title text-center">
+				<h3>Entonces...</h3>
+				<p class="lead">¿Cómo podemos mejorar la seguridad y el mantenimiento de los puentes?</p>
+			</div><!-- end title -->
 			
 			<div class="seo-services row clearfix">
-                <div class="col-md-6 col-xs-12">
+				<div class="col-md-6 col-xs-12">
 					<div class="why-img-box">
 						<img src="{{ url_for('static', filename='images/seo_01.png') }}" alt="" class="img-fluid img-rounded">
 					</div>
-                </div><!-- end col -->
-
-                <div class="col-md-6 col-xs-12">
+				</div><!-- end col -->
+			
+				<div class="col-md-6 col-xs-12">
 					<div class="why-dit">
 						<h4>Nuestro Objetivo</h4>
-						<p>Desarrollar un sistema de información orientado al análisis y manejo de datos médicos, genéticos y de estilo de vida para que se pueda tener una identificación temprana y seguimiento de diversas condiciones prediabéticas y diabéticas. </p>
-						<p>Este sistema integrará herramientas de análisis avanzadas, como modelos predictivos y procesamiento de grandes volúmenes de datos clínicos, para facilitar el diagnóstico temprano y el monitoreo continuo. Además, contará con una interfaz intuitiva que permitirá a los profesionales de la salud interpretar los resultados de manera eficiente, mejorando la toma de decisiones y personalizando el manejo de cada paciente según sus necesidades específicas.</p>
+						<p>Desarrollar un sistema de monitoreo basado en IoT que permita supervisar en tiempo real la integridad estructural de puentes para identificar problemas potenciales, mejorar la seguridad pública y optimizar los costos de mantenimiento.</p>
+						<p>Este sistema utilizará tecnología IoT para recopilar y procesar datos en tiempo real sobre la integridad estructural de los puentes. Permitirá que las personas puedan visualizar de manera sencilla el estado de los puentes en su entorno cercano, mientras que los administradores tendrán acceso a un análisis más detallado del estado de las infraestructuras, facilitando la toma de decisiones y el mantenimiento preventivo.</p>
 					</div>
-                </div><!-- end col -->
+				</div><!-- end col -->
+			</div>
+			
+		
+			
+				<div class="row vission-and-mission">
+					<div class="col-md-12">
+						<ul class="nav nav-pills nav-justified" id="myTab" role="tablist">
+							<li class="nav-item"><a class="nav-link active" href="#tab_a" data-toggle="tab">¿Qué es Iot?</a></li>
+							<li class="nav-item"><a class="nav-link" href="#tab_b" data-toggle="tab">¿Qué sensor usaremos?</a></li>				
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane fade show active" id="tab_a">
+								<div class="box-inner-m">
+									<p>El Internet de las Cosas (IoT) es una tecnología que conecta dispositivos como sensores y microcontroladores a internet, permitiendo recopilar y compartir datos en tiempo real. Esto ayuda a automatizar procesos, tomar decisiones más rápidas y eficaces, y monitorear todo tipo de cosas, desde la salud de las personas hasta la seguridad de infraestructuras. </p>
+									<p>En este proyecto, IoT juega un papel crucial, ya que nos permite mantener un monitoreo continuo y detallado del estado de los puentes. Gracias a esta tecnología, podemos estar conectados permanentemente con las infraestructuras, detectando cualquier anomalía en tiempo real y eliminando la dependencia de las inspecciones manuales periódicas, que suelen ser lentas y costosas. Esto no solo mejora la eficiencia, sino que también garantiza una mayor seguridad para las personas que utilizan estas estructuras a diario..</p>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="tab_b">
+								<div class="box-inner-m">
+									<p>Para este sistema usaremos sensores llamados galgas extensiométricas, que son ideales para medir fuerzas y detectar deformaciones en los puentes. Estos sensores están conectados a un módulo llamado HX711, que convierte la información en datos digitales que luego se envían al sistema </p>
+									<p> Estos datos se envían al sistema para su análisis en tiempo real, lo que permite identificar cualquier cambio en la estructura antes de que pueda convertirse en un problema serio. Este enfoque proactivo no solo asegura que el puente esté en condiciones óptimas, sino que también permite tomar medidas preventivas rápidamente, garantizando la seguridad de las personas y la durabilidad de la infraestructura</p>
+								</div>
+							</div>
+						</div>
+					</div>				
+				</div>
 			
             </div><!-- end how-its-work -->
         </div><!-- end container -->
     </div><!-- end section -->
+
+	
 
     <div id="services" class="section lb">
         <div class="container-fluid">
@@ -202,8 +209,8 @@
 							<div class="post-media wow fadeIn">
 								<img src="{{ url_for('static', filename='images/seo_01.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
-							<h3>Análisis de Factores Clave</h3>
-							<p> Identificando y comprendiendo los elementos médicos, genéticos y de estilo de vida que influyen en las condiciones prediabéticas y diabéticas.</p>
+							<h3>Sensores</h3>
+							<p> Incorporarando sensores que midan la fuerza que se ejerce en los puntos críticos de la infraestructura</p>
 						</div><!-- end service -->
 					</div><!-- end col -->
 
@@ -212,8 +219,8 @@
 							<div class="post-media wow fadeIn">
 								<img src="{{ url_for('static', filename='images/seo_02.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
-							<h3>Modelos</h3>
-							<p>Desarrollando modelos que correlacionen los datos médicos y genéticos claves para optimizar la detección temprana y el manejo de pacientes. </p>
+							<h3>Base de Datos</h3>
+							<p>Diseñar una base de datos para almacenar toda la información, asegurando que sea accesible y confiable para su análisis. </p>
 						</div><!-- end service -->
 					</div><!-- end col -->
 
@@ -222,8 +229,8 @@
 							<div class="post-media wow fadeIn">
 								<img src="{{ url_for('static', filename='images/seo_03.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
-							<h3>Interfaz Fácil e Intuitiva</h3>
-							<p>Diseñando una interfaz accesible que facilite la interpretación de datos y mejore la toma de decisiones clínicas.</p>
+							<h3>Dashboard</h3>
+							<p>Crear una interfaz intuitiva donde se pueda monitorear en tiempo real el estado de las estructuras.</p>
 						</div><!-- end service -->
 					</div><!-- end col -->
 					
@@ -232,8 +239,8 @@
 							<div class="post-media wow fadeIn">
 								<img src="{{ url_for('static', filename='images/seo_04.png') }}" alt="" class="img-fluid img-rounded">
 							</div>
-							<h3>Website Development</h3>
-							<p>Aliquam sagittis ligula et sem lacinia, ut facilisis enim sollicitudin. Proin nisi est, convallis nec purus vitae, iaculis posuere sapien. Cum sociis natoque.</p>
+							<h3>Escalabilidad</h3>
+							<p>Diseñando el sistema de forma flexible, de modo que se puedan añadir más sensores o monitorear nuevas infraestructuras. </p>
 						</div><!-- end service -->
 					</div><!-- end col -->
 
@@ -265,7 +272,7 @@
 		<div class="container">
 			<div class="section-title text-center" style="color: #fff;">
 				<h3 style="color: #fff;">Memoria Escrita</h3>
-				<p>Si quieres conocer más este proyecto, puedes acceder al siguiente link, en el que se muestra todo el proceso para llevarlo a cabo, desde la idea hasta el desarrollo.</p>   
+				<p>Si quieres conocer más este proyecto, puedes acceder al siguiente link, en el que se muestra toda la documentación correspondiente y evidencias para llevarlo a cabo. </p>   
 			</div><!-- end title -->
 	
 			<!-- Botón más abajo con enlace -->
