@@ -1,11 +1,12 @@
 from flask import Flask, jsonify, request, render_template
 import os
+import subprocess
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
 import networkx as nx
 from werkzeug.utils import secure_filename
-from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.cluster import KMeans
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import cross_val_score
@@ -73,7 +74,7 @@ def run_j48(csv_path):
 
         # Si y es categórica, también la codificamos
         if y.dtype == 'object':
-            from sklearn.preprocessing import LabelEncoder
+            from sklearn.preprocessing import LabelEncoder # type: ignore
             le = LabelEncoder()
             y = le.fit_transform(y)
             class_names = le.classes_
@@ -81,23 +82,19 @@ def run_j48(csv_path):
             class_names = [str(cls) for cls in set(y)]
 
         # Dividir los datos en entrenamiento y prueba
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         # Crear y entrenar el modelo de árbol de decisión
         clf = DecisionTreeClassifier()
         clf.fit(X_train, y_train)
 
-        # Generar el gráfico del árbol usando Matplotlib
-        plt.figure(figsize=(14, 8))
-        plot_tree(decision_tree=clf, feature_names=X.columns,
-                  class_names=class_names, filled=True, fontsize=10)
-        plt.tight_layout()
+        # Generar el gráfico del árbol
+        dot_path = os.path.join(app.static_folder, "tree.dot")
+        export_graphviz(clf, out_file=dot_path, feature_names=X.columns, class_names=class_names, filled=True)
 
-        # Guardar la imagen en el directorio 'static'
-        tree_image_path = os.path.join(app.static_folder, "tree.png")
-        plt.savefig(tree_image_path)
-        plt.close()
+        png_path = os.path.join(app.static_folder, "tree.png")
+        command = ["dot", "-Tpng", dot_path, "-o", png_path]
+        subprocess.run(command, check=True)
 
         # Evaluar el modelo usando el conjunto de prueba
         y_pred = clf.predict(X_test)
@@ -115,7 +112,7 @@ def run_j48(csv_path):
             "accuracy": accuracy,
             "mean_absolute_error": mae,
             "mean_squared_error": mse,
-            "classification_report": report,
+            "classification_report": report,  # Convertir a lista para JSON
             "total_instances": len(y_test),
         }
 
@@ -125,12 +122,14 @@ def run_j48(csv_path):
             "tree_image_url": "/static/tree.png",
         })
 
+    except subprocess.CalledProcessError as e:
+        return jsonify({"status": "error", "message": f"Error al ejecutar dot: {e}"})
     except Exception as e:
         import traceback
         traceback_str = ''.join(traceback.format_tb(e.__traceback__))
         error_message = f"{str(e)}\nTraceback:\n{traceback_str}"
         return jsonify({"status": "error", "message": error_message})
-    
+
 def run_kmeans(csv_path, num_clusters):
     try:
         # Cargar los datos usando pandas
@@ -214,7 +213,7 @@ def run_mlp(csv_path):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         # Crear y entrenar el modelo MLP
-        mlp = MLPClassifier(hidden_layer_sizes=(10,), max_iter=500, random_state=1)
+        mlp = MLPClassifier(hidden_layer_sizes=(10,5), max_iter=500, random_state=1)
         mlp.fit(X_train, y_train)
 
         # Evaluar el modelo
