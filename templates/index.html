@@ -71,7 +71,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}">
-                <img src="{{ url_for('static', filename='images/vitalcheck-logo.png') }}" alt="Vitalcheck Logo" style="max-height: 50px;" />
+                <img src="{{ url_for('static', filename='images/infrasense-logo2.png') }}" alt="Vitalcheck Logo" style="max-height: 80px; width: auto;" />
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars-seo"
                 aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,11 +88,12 @@
         </div>
     </nav>
 </header>
-	<!-- End header -->
+<!-- End header -->
+
     
 	<div id="slider" class="sl-slider-wrapper" style="position: relative; width: 100%; height: 100vh; overflow: hidden;">
 		<!-- Imagen de fondo -->
-		<img src="{{ url_for('static', filename='images/slider-01.jpg') }}" alt="Monitoreo de Puentes" style="width: 100%; height: 100%; object-fit: cover;">
+		<img src="{{ url_for('static', filename='images/puente1-banner.jpg') }}" alt="Monitoreo de Puentes" style="width: 100%; height: 100%; object-fit: cover;">
 		
 		<!-- Capa oscura -->
 		<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);"></div>
@@ -115,82 +116,91 @@
 	
 
 
-    <div id="about" class="section wb nopadtop">
-        <div class="container">
-            <div class="row">
-				<div class="col-md-6 m40">
-                    <div class="message-box">
-                        <h4></h4>
-                        <h2>Problema Identificado</h2>
-                        <p>¿Cuál es el problema con el mantenimiento actual de los puentes?</p>
-						
-						<p>Hoy en día, mantener infraestructuras como puentes en buen estado es todo un reto. Las inspecciones manuales son lentas, caras y a menudo no detectan problemas a tiempo, lo que puede llevar a reparaciones costosas o, en el peor de los casos, a accidentes graves.
-							<br>Hace falta una solución más moderna y práctica que permita monitorear estas estructuras de forma continua, identificar problemas antes de que sean graves y aprovechar mejor los recursos disponibles. </p>
-                        
-                    </div><!-- end messagebox -->
-                </div><!-- end col -->
-				
-                <div class="col-md-6">
-                    <div class="post-media wow fadeIn">
-                        <img src="{{ url_for('static', filename='images/about_01.jpg') }}" alt="" class="img-fluid">
-                    </div><!-- end media -->
-                </div><!-- end col -->
-                
-            </div><!-- end row -->
+    <!-- Sección 1: Problema Identificado -->
+<div id="problema" class="section wb nopadtop">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 m40">
+                <div class="message-box">
+                    <h2>Problema Identificado</h2>
+                    <p>¿Cuál es el problema con el mantenimiento actual de los puentes?</p>
+                    <p>Hoy en día, mantener infraestructuras como puentes en buen estado es todo un reto. Las inspecciones manuales son lentas, caras y a menudo no detectan problemas a tiempo, lo que puede llevar a reparaciones costosas o, en el peor de los casos, a accidentes graves.</p>
+                    <p>Hace falta una solución más moderna y práctica que permita monitorear estas estructuras de forma continua, identificar problemas antes de que sean graves y aprovechar mejor los recursos disponibles.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="post-media wow fadeIn">
+                    <img src="{{ url_for('static', filename='images/about_01.jpg') }}" alt="" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-			
-			<hr class="hr1">
-			
-			<div class="section-title text-center">
-				<h3>Entonces...</h3>
-				<p class="lead">¿Cómo podemos mejorar la seguridad y el mantenimiento de los puentes?</p>
-			</div><!-- end title -->
-			
-			<div class="seo-services row clearfix">
-				<div class="col-md-6 col-xs-12">
-					<div class="why-img-box">
-						<img src="{{ url_for('static', filename='images/seo_01.png') }}" alt="" class="img-fluid img-rounded">
-					</div>
-				</div><!-- end col -->
-			
-				<div class="col-md-6 col-xs-12">
-					<div class="why-dit">
-						<h4>Nuestro Objetivo</h4>
-						<p>Desarrollar un sistema de monitoreo basado en IoT que permita supervisar en tiempo real la integridad estructural de puentes para identificar problemas potenciales, mejorar la seguridad pública y optimizar los costos de mantenimiento.</p>
-						<p>Este sistema utilizará tecnología IoT para recopilar y procesar datos en tiempo real sobre la integridad estructural de los puentes. Permitirá que las personas puedan visualizar de manera sencilla el estado de los puentes en su entorno cercano, mientras que los administradores tendrán acceso a un análisis más detallado del estado de las infraestructuras, facilitando la toma de decisiones y el mantenimiento preventivo.</p>
-					</div>
-				</div><!-- end col -->
-			</div>
-			
-		
-			
-				<div class="row vission-and-mission">
-					<div class="col-md-12">
-						<ul class="nav nav-pills nav-justified" id="myTab" role="tablist">
-							<li class="nav-item"><a class="nav-link active" href="#tab_a" data-toggle="tab">¿Qué es Iot?</a></li>
-							<li class="nav-item"><a class="nav-link" href="#tab_b" data-toggle="tab">¿Qué sensor usaremos?</a></li>				
-						</ul>
-						<div class="tab-content">
-							<div class="tab-pane fade show active" id="tab_a">
-								<div class="box-inner-m">
-									<p>El Internet de las Cosas (IoT) es una tecnología que conecta dispositivos como sensores y microcontroladores a internet, permitiendo recopilar y compartir datos en tiempo real. Esto ayuda a automatizar procesos, tomar decisiones más rápidas y eficaces, y monitorear todo tipo de cosas, desde la salud de las personas hasta la seguridad de infraestructuras. </p>
-									<p>En este proyecto, IoT juega un papel crucial, ya que nos permite mantener un monitoreo continuo y detallado del estado de los puentes. Gracias a esta tecnología, podemos estar conectados permanentemente con las infraestructuras, detectando cualquier anomalía en tiempo real y eliminando la dependencia de las inspecciones manuales periódicas, que suelen ser lentas y costosas. Esto no solo mejora la eficiencia, sino que también garantiza una mayor seguridad para las personas que utilizan estas estructuras a diario..</p>
-								</div>
-							</div>
-							<div class="tab-pane fade" id="tab_b">
-								<div class="box-inner-m">
-									<p>Para este sistema usaremos sensores llamados galgas extensiométricas, que son ideales para medir fuerzas y detectar deformaciones en los puentes. Estos sensores están conectados a un módulo llamado HX711, que convierte la información en datos digitales que luego se envían al sistema </p>
-									<p> Estos datos se envían al sistema para su análisis en tiempo real, lo que permite identificar cualquier cambio en la estructura antes de que pueda convertirse en un problema serio. Este enfoque proactivo no solo asegura que el puente esté en condiciones óptimas, sino que también permite tomar medidas preventivas rápidamente, garantizando la seguridad de las personas y la durabilidad de la infraestructura</p>
-								</div>
-							</div>
-						</div>
-					</div>				
-				</div>
-			
-            </div><!-- end how-its-work -->
-        </div><!-- end container -->
-    </div><!-- end section -->
+<div id="entoncesnegro" class="section" style="background-color: #222124; padding: 10px 10;">
+	<div class="container">
+		<div class="section-title text-center" style="color: #fff;">
+			<h3 style="color: #fff; margin-bottom: 10px;">Entonces...</h3>
+			<p style="margin-bottom: 2px;">¿Cómo podemos mejorar la seguridad y el mantenimiento de los puentes?</p>   
+		</div><!-- end title -->
+	</div><!-- end container -->
+</div><!-- end section -->
+
+
+
+<!-- Sección 2: Entonces... -->
+<div id="entonces" class="section wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <div class="why-img-box">
+                    <img src="{{ url_for('static', filename='images/seo_01.png') }}" alt="" class="img-fluid img-rounded">
+                </div>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <div class="why-dit">
+                    <h4>Nuestro Objetivo</h4>
+                    <p>Desarrollar un sistema de monitoreo basado en IoT que permita supervisar en tiempo real la integridad estructural de puentes para identificar problemas potenciales, mejorar la seguridad pública y optimizar los costos de mantenimiento.</p>
+                    <p>Este sistema utilizará tecnología IoT para recopilar y procesar datos en tiempo real sobre la integridad estructural de los puentes. Permitirá que las personas puedan visualizar de manera sencilla el estado de los puentes en su entorno cercano, mientras que los administradores tendrán acceso a un análisis más detallado del estado de las infraestructuras, facilitando la toma de decisiones y el mantenimiento preventivo.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sección 3: Detalles Técnicos -->
+<div id="detalles" class="section wb">
+    <div class="container">
+        <div class="row vission-and-mission">
+            <div class="col-md-12">
+                <ul class="nav nav-pills nav-justified" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#tab_a" data-toggle="tab">¿Qué es IoT?</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab_b" data-toggle="tab">¿Qué sensor usaremos?</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab_a">
+                        <div class="box-inner-m">
+                            <p>El Internet de las Cosas (IoT) es una tecnología que conecta dispositivos como sensores y microcontroladores a internet, permitiendo recopilar y compartir datos en tiempo real. Esto ayuda a automatizar procesos, tomar decisiones más rápidas y eficaces, y monitorear todo tipo de cosas, desde la salud de las personas hasta la seguridad de infraestructuras.</p>
+                            <p>En este proyecto, IoT juega un papel crucial, ya que nos permite mantener un monitoreo continuo y detallado del estado de los puentes. Gracias a esta tecnología, podemos estar conectados permanentemente con las infraestructuras, detectando cualquier anomalía en tiempo real y eliminando la dependencia de las inspecciones manuales periódicas, que suelen ser lentas y costosas. Esto no solo mejora la eficiencia, sino que también garantiza una mayor seguridad para las personas que utilizan estas estructuras a diario.</p>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tab_b">
+                        <div class="box-inner-m">
+                            <p>Para este sistema usaremos sensores llamados galgas extensiométricas, que son ideales para medir fuerzas y detectar deformaciones en los puentes. Estos sensores están conectados a un módulo llamado HX711, que convierte la información en datos digitales que luego se envían al sistema.</p>
+                            <p>Estos datos se envían al sistema para su análisis en tiempo real, lo que permite identificar cualquier cambio en la estructura antes de que pueda convertirse en un problema serio. Este enfoque proactivo no solo asegura que el puente esté en condiciones óptimas, sino que también permite tomar medidas preventivas rápidamente, garantizando la seguridad de las personas y la durabilidad de la infraestructura.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 	
 
