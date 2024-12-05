@@ -131,53 +131,34 @@ def run_kmeans(csv_path, num_clusters):
         # Cargar los datos usando pandas
         data = pd.read_csv(csv_path)
 
-        # Identificar columnas categóricas en X
-        categorical_cols = data.select_dtypes(include=['object']).columns
+        numeric_columns = data.select_dtypes(include=['number'])
 
-        # Opcional: Decidir si se eliminan o se codifican las columnas categóricas
-        # Aquí las eliminamos
-        X = data.drop(columns=categorical_cols)
+        scaler = StandardScaler()
+        scaled_data = scaler.fit_transform(numeric_columns)
 
-        # Asegurarse de que no hay valores NaN
-        X = X.dropna()
-
-        # Crear y entrenar el modelo KMeans
-        kmeans = KMeans(n_clusters=num_clusters, random_state=0)
-        kmeans.fit(X)
-
-        # Obtener los centros de los clusters
+        kmeans = KMeans(n_clusters=num_clusters)
+        cluster_labels = kmeans.fit_predict(scaled_data)
         cluster_centers = kmeans.cluster_centers_
-        cluster_labels = kmeans.labels_
 
-        centers = {}
-        for idx, center in enumerate(cluster_centers):
-            centers[f"Cluster {idx + 1}"] = dict(zip(X.columns, center))
+        data['Cluster'] = cluster_labels
 
-        # Visualizar los clusters
-        plt.figure(figsize=(8, 6))
-        if X.shape[1] >= 2:
-            plt.scatter(X.iloc[:, 0], X.iloc[:, 1], c=cluster_labels, cmap='viridis', s=50, label="Instancias")
-            plt.scatter(cluster_centers[:, 0], cluster_centers[:, 1], color='red', s=100, label="Centroides", edgecolors='black')
-            plt.xlabel(X.columns[0])
-            plt.ylabel(X.columns[1])
-        else:
-            plt.scatter(range(len(X)), X.iloc[:, 0], c=cluster_labels, cmap='viridis', s=50)
-            plt.xlabel("Índice de Instancia")
-            plt.ylabel(X.columns[0])
+        centers = {f"Cluster {i + 1}": dict(zip(numeric_columns.columns, center))
+                   for i, center in enumerate(cluster_centers)}
 
-        plt.title(f"KMeans Clustering (k={num_clusters})")
-        plt.colorbar(label="Cluster")
+        plt.figure(figsize=(10, 7))
+        plt.scatter(scaled_data[:, 0], scaled_data[:, 1], c=cluster_labels, cmap='viridis', alpha=0.7, label="Datos")
+        plt.scatter(cluster_centers[:, 0], cluster_centers[:, 1], c='red', s=200, marker='X', label="Centroides")
+        plt.title(f"Clusters generados con KMeans (k={num_clusters})")
         plt.legend()
-        plt.grid(True)
 
         cluster_image_path = os.path.join(app.static_folder, "clusters.png")
         plt.savefig(cluster_image_path)
         plt.close()
-
+        
         return jsonify({
             "status": "success",
             "cluster_centers": centers,
-            "cluster_image_url": "/static/clusters.png",
+            "cluster_image_url": "/static/clusters.png"
         })
 
     except Exception as e:
