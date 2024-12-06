@@ -80,6 +80,260 @@
         </nav>
     </header>
 
+    
+
+<style>
+    /* Estilos para el modal */
+    .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto; 
+        background-color: rgb(0, 0, 0); 
+        background-color: rgba(0, 0, 0, 0.4); 
+        padding-top: 60px; 
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; 
+    }
+
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+</style>
+
+
+<!-- Modal para ingresar los datos de predicción -->
+<div id="predictionModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal()">&times;</span>
+        <h2>Ingrese los Datos para la Predicción</h2>
+        <form id="predictionForm">
+            <!-- Campos de Predicción -->
+            <div class="form-group">
+                <label for="genetic_markers">Genetic Markers</label>
+                <input type="text" id="genetic_markers" name="genetic_markers" value="Positive">
+            </div>
+            <div class="form-group">
+                <label for="autoantibodies">Autoantibodies</label>
+                <input type="text" id="autoantibodies" name="autoantibodies" value="Positive">
+            </div>
+            <div class="form-group">
+                <label for="family_history">Family History</label>
+                <input type="text" id="family_history" name="family_history" value="Yes">
+            </div>
+            <div class="form-group">
+                <label for="environmental_factors">Environmental Factors</label>
+                <input type="text" id="environmental_factors" name="environmental_factors" value="Present">
+            </div>
+            <div class="form-group">
+                <label for="insulin_levels">Insulin Levels</label>
+                <input type="number" id="insulin_levels" name="insulin_levels" value="27">
+            </div>
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" value="36">
+            </div>
+            <div class="form-group">
+                <label for="bmi">BMI</label>
+                <input type="number" id="bmi" name="bmi" value="24">
+            </div>
+            <div class="form-group">
+                <label for="physical_activity">Physical Activity</label>
+                <input type="text" id="physical_activity" name="physical_activity" value="High">
+            </div>
+            <div class="form-group">
+                <label for="dietary_habits">Dietary Habits</label>
+                <input type="text" id="dietary_habits" name="dietary_habits" value="Unhealthy">
+            </div>
+            <div class="form-group">
+                <label for="blood_pressure">Blood Pressure</label>
+                <input type="number" id="blood_pressure" name="blood_pressure" value="121">
+            </div>
+            <div class="form-group">
+                <label for="cholesterol_levels">Cholesterol Levels</label>
+                <input type="number" id="cholesterol_levels" name="cholesterol_levels" value="185">
+            </div>
+            <div class="form-group">
+                <label for="waist_circumference">Waist Circumference</label>
+                <input type="number" id="waist_circumference" name="waist_circumference" value="36">
+            </div>
+            <div class="form-group">
+                <label for="blood_glucose_levels">Blood Glucose Levels</label>
+                <input type="number" id="blood_glucose_levels" name="blood_glucose_levels" value="105">
+            </div>
+            <div class="form-group">
+                <label for="ethnicity">Ethnicity</label>
+                <input type="text" id="ethnicity" name="ethnicity" value="Low Risk">
+            </div>
+            <div class="form-group">
+                <label for="socioeconomic_factors">Socioeconomic Factors</label>
+                <input type="text" id="socioeconomic_factors" name="socioeconomic_factors" value="Medium">
+            </div>
+            <div class="form-group">
+                <label for="smoking_status">Smoking Status</label>
+                <input type="text" id="smoking_status" name="smoking_status" value="Smoker">
+            </div>
+            <div class="form-group">
+                <label for="alcohol_consumption">Alcohol Consumption</label>
+                <input type="text" id="alcohol_consumption" name="alcohol_consumption" value="High">
+            </div>
+            <div class="form-group">
+                <label for="glucose_tolerance_test">Glucose Tolerance Test</label>
+                <input type="text" id="glucose_tolerance_test" name="glucose_tolerance_test" value="Abnormal">
+            </div>
+            <div class="form-group">
+                <label for="history_of_pcos">History of PCOS</label>
+                <input type="text" id="history_of_pcos" name="history_of_pcos" value="Yes">
+            </div>
+            <div class="form-group">
+                <label for="previous_gestational_diabetes">Previous Gestational Diabetes</label>
+                <input type="text" id="previous_gestational_diabetes" name="previous_gestational_diabetes" value="No">
+            </div>
+            <div class="form-group">
+                <label for="pregnancy_history">Pregnancy History</label>
+                <input type="text" id="pregnancy_history" name="pregnancy_history" value="Normal">
+            </div>
+            <div class="form-group">
+                <label for="weight_gain_during_pregnancy">Weight Gain During Pregnancy</label>
+                <input type="number" id="weight_gain_during_pregnancy" name="weight_gain_during_pregnancy" value="15">
+            </div>
+            <div class="form-group">
+                <label for="pancreatic_health">Pancreatic Health</label>
+                <input type="number" id="pancreatic_health" name="pancreatic_health" value="56">
+            </div>
+            <div class="form-group">
+                <label for="pulmonary_function">Pulmonary Function</label>
+                <input type="number" id="pulmonary_function" name="pulmonary_function" value="80">
+            </div>
+            <div class="form-group">
+                <label for="cystic_fibrosis_diagnosis">Cystic Fibrosis Diagnosis</label>
+                <input type="text" id="cystic_fibrosis_diagnosis" name="cystic_fibrosis_diagnosis" value="Yes">
+            </div>
+            <div class="form-group">
+                <label for="steroid_use_history">Steroid Use History</label>
+                <input type="text" id="steroid_use_history" name="steroid_use_history" value="No">
+            </div>
+            <div class="form-group">
+                <label for="genetic_testing">Genetic Testing</label>
+                <input type="text" id="genetic_testing" name="genetic_testing" value="Negative">
+            </div>
+            <div class="form-group">
+                <label for="neurological_assessments">Neurological Assessments</label>
+                <input type="number" id="neurological_assessments" name="neurological_assessments" value="1">
+            </div>
+            <div class="form-group">
+                <label for="liver_function_tests">Liver Function Tests</label>
+                <input type="text" id="liver_function_tests" name="liver_function_tests" value="Abnormal">
+            </div>
+            <div class="form-group">
+                <label for="digestive_enzyme_levels">Digestive Enzyme Levels</label>
+                <input type="number" id="digestive_enzyme_levels" name="digestive_enzyme_levels" value="55">
+            </div>
+            <div class="form-group">
+                <label for="urine_test">Urine Test</label>
+                <input type="text" id="urine_test" name="urine_test" value="Ketones Present">
+            </div>
+            <div class="form-group">
+                <label for="birth_weight">Birth Weight</label>
+                <input type="number" id="birth_weight" name="birth_weight" value="3622">
+            </div>
+            <div class="form-group">
+                <label for="early_onset_symptoms">Early Onset Symptoms</label>
+                <input type="text" id="early_onset_symptoms" name="early_onset_symptoms" value="Yes">
+            </div>
+            <div class="form-group">
+                <button type="button" onclick="submitPredictionForm()">Enviar Predicción</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal para mostrar el resultado de la predicción -->
+<div id="resultModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeResultModal()">&times;</span>
+        <h2>Resultado de la Predicción</h2>
+        <p id="predictionResult"></p>
+    </div>
+</div>
+
+<style>
+    /* Estilos para el modal de resultado */
+    .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto; 
+        background-color: rgba(0, 0, 0, 0.4); 
+        padding-top: 60px; 
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%; 
+        text-align: center;
+    }
+
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+
+
+
 
     <div class="all-page-title"
         style="background-image:url({{ url_for('static', filename='images/pattern-4.png') }}); position: relative;">
@@ -438,18 +692,125 @@
                 </div>`;
                     }
 
-                    // Mostrar resultados
-                    document.getElementById("result").innerHTML = contentHTML;
-                    document.getElementById("result").style.display = "block";
-                })
-                .catch((error) => {
-                    document.getElementById("result").innerHTML = `
-                    <div style="text-align: center; margin-top: 20px; color: red;">
-                        Error en la conexión: ${error}
-                    </div>`;
-                    document.getElementById("result").style.display = "block";
-                });
+ //Boton de predicción
+if (data.loss_curve_url || data.classification_report) {
+    contentHTML += `
+    <div style="text-align: center; margin-top: 20px;">
+        <button onclick="realizarPrediccion()" class="bttn-new-a">
+            Realizar Predicción
+        </button>
+    </div>`;
+}
+
+
+            // Mostrar resultados
+            document.getElementById("result").innerHTML = contentHTML;
+            document.getElementById("result").style.display = "block";
+        })
+        .catch((error) => {
+            document.getElementById("result").innerHTML = `
+            <div style="text-align: center; margin-top: 20px; color: red;">
+                Error en la conexión: ${error}
+            </div>`;
+            document.getElementById("result").style.display = "block";
+        });
+}
+
+// Función para mostrar el modal de predicción
+function realizarPrediccion() {
+    const modal = document.getElementById("predictionModal");
+
+    // Ocultar el botón de "Realizar Predicción"
+    const realizarPrediccionButton = document.querySelector('button[onclick="realizarPrediccion()"]');
+    if (realizarPrediccionButton) {
+        realizarPrediccionButton.style.display = "none";
+    }
+
+    modal.style.display = "block";
+}
+
+// Función para cerrar el modal de predicción
+function closeModal() {
+    const modal = document.getElementById("predictionModal");
+    modal.style.display = "none";
+
+    // No mostrar aún el botón, ya que el modal de resultados podría estar abierto
+}
+
+// Función para mostrar el modal del resultado
+function showResultModal() {
+    const modal = document.getElementById("resultModal");
+    modal.style.display = "block";
+}
+
+// Función para cerrar el modal del resultado
+function closeResultModal() {
+    const modal = document.getElementById("resultModal");
+    modal.style.display = "none";
+
+    // Mostrar el botón de "Realizar Predicción" solo después de cerrar el modal de resultado
+    const realizarPrediccionButton = document.querySelector('button[onclick="realizarPrediccion()"]');
+    if (realizarPrediccionButton) {
+        realizarPrediccionButton.style.display = "inline-block";
+    }
+}
+
+// Función para enviar los datos del formulario de predicción
+function submitPredictionForm() {
+    const form = document.getElementById("predictionForm");
+    const formData = new FormData(form);
+
+    // Convertir FormData a un objeto simple
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    // Enviar datos a la API para realizar la predicción
+    fetch('/predict_mlp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === "success") {
+            // Mostrar el resultado en el modal
+            document.getElementById("predictionResult").textContent = `El modelo predice que el tipo de diabetes es: ${result.predicted_class}`;
+            showResultModal();
+        } else {
+            document.getElementById("predictionResult").textContent = `Error: ${result.message}`;
+            showResultModal();
         }
+    })
+    .catch(error => {
+        console.error('Error al realizar la predicción:', error);
+        document.getElementById("predictionResult").textContent = 'Hubo un error al realizar la predicción.';
+        showResultModal();
+    });
+
+    // Cerrar el modal de predicción
+    closeModal();
+}
+
+// Cerrar el modal al hacer clic fuera de él
+window.onclick = function (event) {
+    const predictionModal = document.getElementById("predictionModal");
+    const resultModal = document.getElementById("resultModal");
+
+    if (event.target == predictionModal) {
+        predictionModal.style.display = "none";
+    }
+    if (event.target == resultModal) {
+        resultModal.style.display = "none";
+        closeResultModal(); // Asegurar que el botón reaparezca cuando se cierre el modal de resultado
+    }
+}
+
+
+
     </script>
 
 

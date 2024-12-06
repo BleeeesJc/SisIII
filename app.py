@@ -163,12 +163,19 @@ def run_kmeans(csv_path, num_clusters):
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
+    
+# Declarar variables globales
+label_encoders = {}
+scaler = None
+mlp = None
 
 def run_mlp(csv_path):
+    global label_encoders, scaler, mlp  # Hacerlas accesibles desde otras funciones
     try:
         # Cargar los datos usando pandas
         data = pd.read_csv(csv_path)
 
+        # Mantener los nombres de las columnas tal cual en el dataset original
         # Identificar columnas categóricas y aplicar Label Encoding
         label_encoders = {}
         categorical_columns = data.select_dtypes(include=['object']).columns
@@ -238,6 +245,101 @@ def run_mlp(csv_path):
         traceback_str = ''.join(traceback.format_tb(e.__traceback__))
         error_message = f"{str(e)}\nTraceback:\n{traceback_str}"
         return jsonify({"status": "error", "message": error_message})
+
+    
+
+@app.route('/predict_mlp', methods=['POST'])
+def predict_mlp():
+    try:
+        # Obtener los datos del formulario en formato JSON
+        data = request.json
+
+        # Convertir los datos a un DataFrame de pandas
+        new_data = pd.DataFrame([data])
+
+        # Definir los nombres esperados de las columnas
+        expected_columns = [
+            'Genetic Markers', 'Autoantibodies', 'Family History', 'Environmental Factors', 'Insulin Levels',
+            'Age', 'BMI', 'Physical Activity', 'Dietary Habits', 'Blood Pressure', 'Cholesterol Levels',
+            'Waist Circumference', 'Blood Glucose Levels', 'Ethnicity', 'Socioeconomic Factors',
+            'Smoking Status', 'Alcohol Consumption', 'Glucose Tolerance Test', 'History of PCOS',
+            'Previous Gestational Diabetes', 'Pregnancy History', 'Weight Gain During Pregnancy',
+            'Pancreatic Health', 'Pulmonary Function', 'Cystic Fibrosis Diagnosis', 'Steroid Use History',
+            'Genetic Testing', 'Neurological Assessments', 'Liver Function Tests', 'Digestive Enzyme Levels',
+            'Urine Test', 'Birth Weight', 'Early Onset Symptoms'
+        ]
+
+        # Mapeo para convertir los nombres ingresados a los nombres esperados
+        column_mapping = {
+            'genetic_markers': 'Genetic Markers',
+            'autoantibodies': 'Autoantibodies',
+            'family_history': 'Family History',
+            'environmental_factors': 'Environmental Factors',
+            'insulin_levels': 'Insulin Levels',
+            'age': 'Age',
+            'bmi': 'BMI',
+            'physical_activity': 'Physical Activity',
+            'dietary_habits': 'Dietary Habits',
+            'blood_pressure': 'Blood Pressure',
+            'cholesterol_levels': 'Cholesterol Levels',
+            'waist_circumference': 'Waist Circumference',
+            'blood_glucose_levels': 'Blood Glucose Levels',
+            'ethnicity': 'Ethnicity',
+            'socioeconomic_factors': 'Socioeconomic Factors',
+            'smoking_status': 'Smoking Status',
+            'alcohol_consumption': 'Alcohol Consumption',
+            'glucose_tolerance_test': 'Glucose Tolerance Test',
+            'history_of_pcos': 'History of PCOS',
+            'previous_gestational_diabetes': 'Previous Gestational Diabetes',
+            'pregnancy_history': 'Pregnancy History',
+            'weight_gain_during_pregnancy': 'Weight Gain During Pregnancy',
+            'pancreatic_health': 'Pancreatic Health',
+            'pulmonary_function': 'Pulmonary Function',
+            'cystic_fibrosis_diagnosis': 'Cystic Fibrosis Diagnosis',
+            'steroid_use_history': 'Steroid Use History',
+            'genetic_testing': 'Genetic Testing',
+            'neurological_assessments': 'Neurological Assessments',
+            'liver_function_tests': 'Liver Function Tests',
+            'digestive_enzyme_levels': 'Digestive Enzyme Levels',
+            'urine_test': 'Urine Test',
+            'birth_weight': 'Birth Weight',
+            'early_onset_symptoms': 'Early Onset Symptoms'
+        }
+
+        # Renombrar las columnas del DataFrame recibido con base en el mapeo
+        new_data.rename(columns=column_mapping, inplace=True)
+
+        # Verificar si todas las columnas esperadas están presentes
+        missing_columns = [col for col in expected_columns if col not in new_data.columns]
+        if missing_columns:
+            return jsonify({"status": "error", "message": f"Faltan las siguientes columnas: {missing_columns}"})
+
+        # Ordenar y alinear las columnas según se espera en el entrenamiento
+        new_data = new_data[expected_columns]
+
+        # Identificar columnas categóricas y aplicar Label Encoding con los encoders usados durante el entrenamiento
+        for col, le in label_encoders.items():
+            if col in new_data.columns:
+                new_data[col] = le.transform(new_data[col])
+
+        # Escalar características numéricas con el escalador utilizado durante el entrenamiento
+        new_data_scaled = scaler.transform(new_data)
+
+        # Realizar la predicción
+        prediction = mlp.predict(new_data_scaled)
+
+        # Decodificar la clase predicha
+        predicted_class = label_encoders['Target'].inverse_transform(prediction)
+
+        # Devolver la predicción al cliente
+        return jsonify({
+            "status": "success",
+            "predicted_class": predicted_class[0]
+        })
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
