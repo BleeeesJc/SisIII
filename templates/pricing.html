@@ -538,12 +538,7 @@
     <script src="{{ url_for('static', filename='js/tippy.all.min.js') }}"></script>
     <script>
         let selectedAlgorithm = null;
-
-        function chooseAlgorithm(algorithm) {
-            selectedAlgorithm = algorithm;
-            alert(`Has seleccionado el algoritmo: ${algorithm}`);
-        }
-
+        
         function submitForm() {
             if (!selectedAlgorithm) {
                 alert("Por favor, selecciona un algoritmo primero.");
@@ -585,7 +580,43 @@
                         document.getElementById("result").style.display = "block";
                         return;
                     }
+                    if (selectedAlgorithm === "j48" && data.feature_importance) {
+    // Table for predictor importance
+    contentHTML += `
+    <div style="text-align: center; margin-top: 20px;">
+        <h3>Importancia de los Predictores:</h3>
+        <table border="1" style="width: 70%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 10px;">Predictor</th>
+                    <th style="padding: 10px;">Importancia</th>
+                </tr>
+            </thead>
+            <tbody>`;
+    
+    data.feature_importance.forEach((feature) => {
+        contentHTML += `
+        <tr>
+            <td style="padding: 10px;">${feature.predictor}</td>
+            <td style="padding: 10px;">${parseFloat(feature.importancia).toFixed(2)}</td>
+        </tr>`;
+    });
 
+    contentHTML += `
+            </tbody>
+        </table>
+    </div>`;
+
+    // Add the tree image if available, ensuring it's added only once
+    if (data.tree_image_url) {
+        contentHTML += `
+        <div style="text-align: center; margin-top: 20px;">
+            <img src="${data.tree_image_url}" 
+                 alt="Visualización del Árbol J48" 
+                 style="max-width: 70%; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
+        </div>`;
+    }
+}
                     if (selectedAlgorithm === "mlp" && data.classification_report) {
     // Tabla de precisión total y última iteración
     contentHTML += `
