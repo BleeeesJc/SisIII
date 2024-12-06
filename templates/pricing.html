@@ -538,6 +538,11 @@
     <script src="{{ url_for('static', filename='js/tippy.all.min.js') }}"></script>
     <script>
         let selectedAlgorithm = null;
+
+        function chooseAlgorithm(algorithm) {
+            selectedAlgorithm = algorithm;
+            alert(`Has seleccionado el algoritmo: ${algorithm}`);
+        }
         
         function submitForm() {
             if (!selectedAlgorithm) {
