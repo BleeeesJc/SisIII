@@ -685,10 +685,10 @@
                         return;
                     }
                     if (selectedAlgorithm === "j48" && data.feature_importance) {
-                        // Table for predictor importance
-                        contentHTML += `
+    // Tabla para importancia de los predictores generales
+    contentHTML += `
     <div style="text-align: center; margin-top: 20px;">
-        <h3>Importancia de los Predictores:</h3>
+        <h3>Importancia de los Predictores (General):</h3>
         <table border="1" style="width: 70%; margin: 0 auto; text-align: left; border-collapse: collapse;">
             <thead>
                 <tr style="background-color: #f2f2f2;">
@@ -697,30 +697,73 @@
                 </tr>
             </thead>
             <tbody>`;
-
-                        data.feature_importance.forEach((feature) => {
-                            contentHTML += `
+    
+    data.feature_importance.forEach((feature) => {
+        contentHTML += `
         <tr>
             <td style="padding: 10px;">${feature.predictor}</td>
             <td style="padding: 10px;">${parseFloat(feature.importancia).toFixed(2)}</td>
         </tr>`;
-                        });
+    });
 
-                        contentHTML += `
+    contentHTML += `
             </tbody>
         </table>
     </div>`;
 
-                        // Add the tree image if available, ensuring it's added only once
-                        if (data.tree_image_url) {
-                            contentHTML += `
+    // Agregar la imagen del árbol general
+    if (data.tree_image_url) {
+        contentHTML += `
         <div style="text-align: center; margin-top: 20px;">
+            <h3>Árbol de Decisión (General):</h3>
             <img src="${data.tree_image_url}" 
-                 alt="Visualización del Árbol J48" 
+                 alt="Visualización del Árbol J48 General" 
                  style="max-width: 70%; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
         </div>`;
-                        }
-                    }
+    }
+
+    // Si hay datos específicos para "Gestational Diabetes"
+    if (data.feature_importance_gestational_diabetes && data.feature_importance_gestational_diabetes.length > 0) {
+        // Tabla para importancia de los predictores específicos
+        contentHTML += `
+        <div style="text-align: center; margin-top: 20px;">
+            <h3>Importancia de los Predictores (Gestational Diabetes):</h3>
+            <table border="1" style="width: 70%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="padding: 10px;">Predictor</th>
+                        <th style="padding: 10px;">Importancia</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        
+        data.feature_importance_gestational_diabetes.forEach((feature) => {
+            contentHTML += `
+            <tr>
+                <td style="padding: 10px;">${feature.predictor}</td>
+                <td style="padding: 10px;">${parseFloat(feature.importancia).toFixed(2)}</td>
+            </tr>`;
+        });
+
+        contentHTML += `
+                </tbody>
+            </table>
+        </div>`;
+
+        // Agregar la imagen del árbol para "Gestational Diabetes"
+        if (data.tree_image_url_gestational_diabetes) {
+            contentHTML += `
+            <div style="text-align: center; margin-top: 20px;">
+                <h3>Árbol de Decisión (Gestational Diabetes):</h3>
+                <img src="${data.tree_image_url_gestational_diabetes}" 
+                     alt="Visualización del Árbol J48 para Gestational Diabetes" 
+                     style="max-width: 70%; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
+            </div>`;
+        }
+
+    }
+}
+
                     if (selectedAlgorithm === "mlp" && data.classification_report) {
                         // Tabla de precisión total y última iteración
                         contentHTML += `

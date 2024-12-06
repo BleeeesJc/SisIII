@@ -57,10 +57,11 @@ def run_j48(csv_path):
     try:
         # Leer el archivo CSV
         data = pd.read_csv(csv_path)
-        
+
         # Separar características (X) y etiquetas (y)
         X = data.drop(columns=["Target"])
         y = data["Target"]
+
         # Convertir columnas categóricas a números
         label_encoders = {}
         for column in X.select_dtypes(include='object').columns:
@@ -69,14 +70,15 @@ def run_j48(csv_path):
 
         y_encoder = LabelEncoder()
         y = y_encoder.fit_transform(y)
+
         # Dividir en conjunto de entrenamiento y prueba
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # Crear y entrenar el modelo de árbol de decisión
+        # Crear y entrenar el modelo de árbol de decisión general
         clf = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=42)
         clf.fit(X_train, y_train)
 
-        # Generar el gráfico del árbol
+        # Generar el gráfico del árbol general
         plt.figure(figsize=(14, 8))
         plot_tree(
             decision_tree=clf,
@@ -91,18 +93,69 @@ def run_j48(csv_path):
         tree_image_path = os.path.join(app.static_folder, "tree.png")
         plt.savefig(tree_image_path)
         plt.close()
-        
-        # Calcular la importancia de los predictores
+
+        # Calcular la importancia de los predictores generales
         importancia_predictores = pd.DataFrame({
             'predictor': X.columns,
             'importancia': clf.feature_importances_
         }).sort_values(by='importancia', ascending=False)
 
-        # Devolver la URL del gráfico
+        # Filtrar datos para "Gestational Diabetes"
+        target_class = "Gestational Diabetes"
+        if target_class in y_encoder.classes_:
+            class_index = list(y_encoder.classes_).index(target_class)
+            gestational_data = data[data["Target"] == target_class]
+
+            X_gd = gestational_data.drop(columns=["Target"])
+            y_gd = gestational_data["Target"]
+
+            # Convertir columnas categóricas a números
+            for column in X_gd.select_dtypes(include='object').columns:
+                X_gd[column] = label_encoders[column].transform(X_gd[column])
+
+            y_gd = y_encoder.transform(y_gd)
+
+            # Entrenar modelo específico para "Gestational Diabetes"
+            clf_gd = DecisionTreeClassifier(criterion='entropy', max_depth=10, random_state=42)
+            clf_gd.fit(X_gd, y_gd)
+
+            # Generar el gráfico del árbol específico
+            plt.figure(figsize=(14, 8))
+            plot_tree(
+                decision_tree=clf_gd,
+                feature_names=X_gd.columns,
+                class_names=[target_class],
+                filled=True,
+                fontsize=10
+            )
+            plt.tight_layout()
+
+            # Guardar el gráfico específico en un archivo
+            tree_image_path_gd = os.path.join(app.static_folder, "tree_gestational_diabetes.png")
+            plt.savefig(tree_image_path_gd)
+            plt.close()
+
+            # Calcular importancia de predictores para "Gestational Diabetes"
+            importancia_predictores_gd = pd.DataFrame({
+                'predictor': X_gd.columns,
+                'importancia': clf_gd.feature_importances_
+            }).sort_values(by='importancia', ascending=False)
+
+            # Guardar tabla de importancias específicas como CSV
+            gd_csv_path = os.path.join(app.static_folder, "importance_gestational_diabetes.csv")
+            importancia_predictores_gd.to_csv(gd_csv_path, index=False)
+        else:
+            tree_image_path_gd = None
+            importancia_predictores_gd = pd.DataFrame()
+
+        # Devolver la información como respuesta JSON
         return jsonify({
             "status": "success",
             "tree_image_url": "/static/tree.png",
-            "feature_importance": importancia_predictores.to_dict(orient="records")
+            "tree_image_url_gestational_diabetes": "/static/tree_gestational_diabetes.png",
+            "feature_importance": importancia_predictores.to_dict(orient="records"),
+            "feature_importance_gestational_diabetes": importancia_predictores_gd.to_dict(orient="records"),
+            "gestational_diabetes_csv_url": "/static/importance_gestational_diabetes.csv"
         })
 
     except Exception as e:
@@ -110,7 +163,7 @@ def run_j48(csv_path):
         traceback_str = ''.join(traceback.format_tb(e.__traceback__))
         error_message = f"{str(e)}\nTraceback:\n{traceback_str}"
         return jsonify({"status": "error", "message": error_message})
-    
+
 def run_kmeans(csv_path, num_clusters):
     try:
         # Cargar los datos usando pandas
